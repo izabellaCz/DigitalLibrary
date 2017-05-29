@@ -20,13 +20,19 @@ import android.view.ViewGroup;
 
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.vlad.licenta.model.Author;
 import com.example.vlad.licenta.model.User;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 public class Administrator extends AppCompatActivity implements View.OnClickListener{
 
@@ -92,7 +98,19 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
                 Toast.makeText(this, "You cancelled the scanning", Toast.LENGTH_LONG).show();
 
             } else {
-                Toast.makeText(this, result.getContents(), Toast.LENGTH_LONG).show();
+                String scanResult = result.getContents();
+                Toast.makeText(this, scanResult, Toast.LENGTH_LONG).show();
+
+                String[] tokenizer = scanResult.split(",");
+
+                int userId = Integer.parseInt(tokenizer[0]);
+                int bookId = Integer.parseInt(tokenizer[1]);
+                SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date now = new Date();
+                String strDate = sdfDate.format(now);
+
+
+
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

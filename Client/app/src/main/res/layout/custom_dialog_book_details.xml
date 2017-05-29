@@ -21,7 +21,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/book_image_dialog"
+            android:layout_marginLeft="10dp"
             android:text="descriere..."
+            android:maxLines = "8"
+            android:scrollbars = "vertical"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@android:color/black" />
 

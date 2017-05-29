@@ -1,13 +1,10 @@
 package com.example.vlad.licenta;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -21,9 +18,6 @@ import org.json.JSONArray;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by z003kf7w on 05.04.2017.
- */
 public class BooksList extends Fragment {
 
     ListView lv;
@@ -33,7 +27,7 @@ public class BooksList extends Fragment {
     List<Book> listOfBooks;
 
     private static CustomAdapterBooks adapter;
-    public static Fragment favouriteListFragment;
+    public static Fragment booksListFragment;
 
     public static final String TAG = Client.class.getSimpleName();
     protected JSONArray mTasksData;
@@ -45,87 +39,104 @@ public class BooksList extends Fragment {
 
         lv = (ListView) rootView.findViewById(R.id.listBooks);
 
-        bindListView();
+        booksListFragment = this;
 
-        favouriteListFragment = this;
+        listOfBooks = new ArrayList<>();
+
+        String url = ServerProperties.HOST;
+        url += "/library/list";
+
+        ServerRequestGET<List<Book>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Book.class),
+                new AsyncResponse<List<Book>>() {
+                    @Override
+                    public void actionCompleted(List<Book> res) {
+                        listOfBooks = res;
+                        adapter = new CustomAdapterBooks(listOfBooks, getContext());
+                        lv.setAdapter(adapter);
+                    }
+                });
+
+        theServerRequest.execute();
+
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+
+                final Book selectedBook = listOfBooks.get(position);
+
+                String url = ServerProperties.HOST;
+                url += "/library/isFavourite";
+                if ( booksListFragment.getActivity() instanceof Client )
+                    url += "?userId=" + ((Client)booksListFragment.getActivity()).getCurrentUser().getId();
+                else
+                    url += "?userId=" + ((Administrator)booksListFragment.getActivity()).getCurrentUser().getId();
+
+                url += "&bookId=" + listOfBooks.get(position).getId();
+
+                final int[] isFavourite = {0};
+                ServerRequestGET<String> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(String.class),
+                        new AsyncResponse<String>() {
+                            @Override
+                            public void actionCompleted(String obj) {
+                                if ( obj != null && obj.compareTo("1") == 0 )
+                                    isFavourite[0] = 1;
+                                MiscFunctions.CreateAlertDialog(booksListFragment.getActivity(), selectedBook, isFavourite[0]);
+                            }
+                        });
+
+                theServerRequest.execute();
+
+            }
+        });
+
+        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                return false;
+            }
+        });
 
         return rootView;
     }
 
-    public void bindListView() {
-        new GetLibraryInformation(getActivity(),lv).execute("");
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        if (v.getId()==R.id.list) {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+            menu.setHeaderTitle("Pick Action");
+            String[] menuItems = new String[]{"Add To Favorites",""};
+            for (int i = 0; i<menuItems.length; i++) {
+                menu.add(Menu.NONE, i, i, menuItems[i]);
+            }
+        }
+
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if ( this.isVisible() )
+        {
+            if ( isVisibleToUser ) {
+                String url = ServerProperties.HOST;
+                url += "/library/list";
 
-    class GetLibraryInformation extends AsyncTask<Object, Void, JSONArray> {
-        ListView mListView;
-        Activity mContext;
+                ServerRequestGET<List<Book>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Book.class),
+                        new AsyncResponse<List<Book>>() {
+                            @Override
+                            public void actionCompleted(List<Book> res) {
+                                if (res == null) res = new ArrayList<>();
+                                listOfBooks = res;
+                                adapter.refresh(listOfBooks);
+                            }
+                        });
 
-
-        public GetLibraryInformation(Activity context,ListView gview) {
-            this.mListView=gview;
-            this.mContext=context;
+                theServerRequest.execute();
+            }
         }
 
-        @Override
-        protected JSONArray doInBackground(Object... params) {
-            JSONArray jsonResponse = null;
-
-            // Get JSON data, all coming through fine
-            return jsonResponse;
-        }
-
-
-        @Override
-        protected void onPostExecute(JSONArray result) {
-            mTasksData = result;
-            /*String[] keys = {KEY_TITLE, KEY_AUTHOR };
-            int[] ids = { android.R.id.text1, android.R.id.text2 };
-            String author = "Mihaie Eminescu";
-
-            favoritesObjects = new ArrayList<>();
-
-            favoritesObjects.add(new FavoritesObject("Title", "Author.."));
-            favoritesObjects.add(new FavoritesObject("Title1", "Author1.."));
-            favoritesObjects.add(new FavoritesObject("Title2", "Author2.."));*/
-
-            listOfBooks = new ArrayList<>();
-
-            String url = ServerProperties.HOST;
-            url += "/library/list";
-
-            ServerRequestGET<List<Book>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Book.class),
-                    new AsyncResponse<List<Book>>() {
-                        @Override
-                        public void actionCompleted(List<Book> res) {
-                            listOfBooks = res;
-                            adapter = new CustomAdapterBooks(listOfBooks, getContext());
-                            lv.setAdapter(adapter);
-                        }
-                    });
-
-            theServerRequest.execute();
-
-
-            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                    Book selectedBook = listOfBooks.get(position);
-
-                    Bitmap bm;
-                    if (selectedBook.getCover() == null) {
-                        bm = BitmapFactory.decodeResource(getResources(), R.drawable.default_book_image);
-                    } else {
-                        bm = BitmapFactory.decodeByteArray(selectedBook.getCover(), 0, selectedBook.getCover().length);
-                    }
-                    MiscFunctions.CreateAlertDialog(favouriteListFragment.getActivity(), bm, selectedBook.getTitle(), selectedBook.getAuthor().getName(), selectedBook.getDescription());
-
-                    //     Snackbar.make(view, favoritesObject.getName()+"\n"+ favoritesObject.getAuthor(), Snackbar.LENGTH_LONG)
-                    //            .setAction("No action", null).show();
-                }
-            });
-
-        }
     }
 }

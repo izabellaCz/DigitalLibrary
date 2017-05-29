@@ -40,7 +40,7 @@ public class ClientTabs extends FragmentPagerAdapter {
             case 1:
                 return new FavouritesList();
             case 2:
-                return new cHistoryList();
+                return new HistoryList();
 
             default:
                 return null;

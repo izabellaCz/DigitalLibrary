@@ -34,6 +34,8 @@ public class ServerRequestGET<T> extends AsyncTask<Void, Void, T> {
 
         String jsonResponse = restTemplate.getForObject(url, String.class);
 
+        if (jsonResponse == null) return null;  // no results found
+
         ObjectMapper objectMapper = new ObjectMapper();
         T list = null;
         try {

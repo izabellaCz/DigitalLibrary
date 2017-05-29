@@ -3,6 +3,7 @@ package com.example.vlad.licenta;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CustomAdapterBooks extends ArrayAdapter<Book> implements View.OnClickListener{
+public class CustomAdapterBooks extends ArrayAdapter<Book> {
 
     private List<Book> dataSet;
     Context mContext;
@@ -33,24 +34,28 @@ public class CustomAdapterBooks extends ArrayAdapter<Book> implements View.OnCli
         super(context, R.layout.row_item, data);
         this.dataSet = data;
         this.mContext=context;
+    }
 
-
+    public void refresh(List<Book> data)
+    {
+        this.dataSet = data;
+        notifyDataSetChanged();
     }
 
     @Override
-    public void onClick(View v) {
+    public int getCount() {
+        return dataSet.size();
+    }
 
-        int position=(Integer) v.getTag();
-        Object object= getItem(position);
-        FavoritesObject favoritesObject =(FavoritesObject)object;
+    @Nullable
+    @Override
+    public Book getItem(int position) {
+        return dataSet.get(position);
+    }
 
-//        switch (v.getId())
-//        {
-//            case R.id.item_info:
-//                Snackbar.make(v, "Release date " +favoritesObject.getFeature(), Snackbar.LENGTH_LONG)
-//                        .setAction("No action", null).show();
-//                break;
-//        }
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 
     private int lastPosition = -1;

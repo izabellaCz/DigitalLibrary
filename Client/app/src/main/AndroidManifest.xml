@@ -31,8 +31,6 @@
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Administrator" />
-        <activity android:name=".AdministratorAddBook" />
-
         <activity
             android:name=".qrGeneratePage"
             android:label="@string/title_activity_qr_generate_page"

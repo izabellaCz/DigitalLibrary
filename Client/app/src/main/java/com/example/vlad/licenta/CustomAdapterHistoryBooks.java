@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.vlad.licenta.model.Book;
 import com.example.vlad.licenta.model.History;
 
 import java.util.ArrayList;
@@ -31,16 +32,20 @@ public class CustomAdapterHistoryBooks extends ArrayAdapter<History> implements 
         super(context, R.layout.row_item, data);
         this.dataSet = data;
         this.mContext=context;
+    }
 
 
+    public void refresh(List<History> data)
+    {
+        this.dataSet = data;
+        notifyDataSetChanged();
     }
 
     @Override
     public void onClick(View v) {
 
         int position=(Integer) v.getTag();
-        Object object= getItem(position);
-        HistoryObject historyObject =(HistoryObject)object;
+        Object object= getItem(position);//
 
 //        switch (v.getId())
 //        {
@@ -56,7 +61,7 @@ public class CustomAdapterHistoryBooks extends ArrayAdapter<History> implements 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        History historyObject = getItem(position);
+       History historyObject = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         ViewHolder viewHolder; // view lookup cache stored in tag
 

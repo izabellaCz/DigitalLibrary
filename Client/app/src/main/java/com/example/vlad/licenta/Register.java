@@ -104,37 +104,37 @@ public class Register extends AppCompatActivity {
 
 //        else
 //        {
-        // VERIFICAM IN BAZA DE DATE DACA EXISTA EMAIL-UL INTRODUS
-        // DACA NU, VOM PUNE IN BAZA DE DATE CONTUL NOU. ---- Eventual mesaj SUCCES
+            // VERIFICAM IN BAZA DE DATE DACA EXISTA EMAIL-UL INTRODUS
+            // DACA NU, VOM PUNE IN BAZA DE DATE CONTUL NOU. ---- Eventual mesaj SUCCES
 
 
-        String url = ServerProperties.HOST;
-        url += "/user/register?fullname=";
-        url += name;
-        url += "&username=";
-        url += email_r;
-        url += "&password=";
-        url += LogIn.md5(password_r);
-        url += "&type=REGULAR";
-        ServerRequestGET<String> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(String.class),
-                new AsyncResponse<String>() {
-                    @Override
-                    public void actionCompleted(String res) {
+            String url = ServerProperties.HOST;
+            url += "/user/register?fullname=";
+            url += name;
+            url += "&username=";
+            url += email_r;
+            url += "&password=";
+            url += LogIn.md5(password_r);
+            url += "&type=REGULAR";
+            ServerRequestGET<String> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(String.class),
+                    new AsyncResponse<String>() {
+                        @Override
+                        public void actionCompleted(String res) {
 
-                        if(res.equals("1")) {
-                            MiscFunctions.CreateToast(getApplicationContext(), "Successfully registered!");
-                            Intent intent = new Intent(getApplicationContext(), LogIn.class);
-                            startActivity(intent);
+                            if(res.equals("1")) {
+                                MiscFunctions.CreateToast(getApplicationContext(), "Successfully registered!");
+                                Intent intent = new Intent(getApplicationContext(), LogIn.class);
+                                startActivity(intent);
+                            }
+                            else
+                            {
+                                MiscFunctions.CreateToast(getApplicationContext(), "Email already registered!");
+                            }
                         }
-                        else
-                        {
-                            MiscFunctions.CreateToast(getApplicationContext(), "Email already registered!");
-                        }
-                    }
-                });
+                    });
 
-        theServerRequest.execute();
-    }
+            theServerRequest.execute();
+        }
 
 }
 //    }

@@ -1,11 +1,12 @@
 package com.example.vlad.licenta;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 
 //import com.example.vlad.licenta.Client.PlaceholderFragment;
 
+
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 
 public class AdministratorTabs extends FragmentPagerAdapter {
 

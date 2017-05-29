@@ -39,92 +39,63 @@ public class FavouritesList extends Fragment {
 
         View rootView = inflater.inflate(R.layout.content_main, container, false);
 
+        favouriteListFragment = this;
+
         lv = (ListView) rootView.findViewById(R.id.list);
 
-        bindListView();
+        favouriteBooks = new ArrayList<>();
 
-        favouriteListFragment = this;
+        String url = ServerProperties.HOST;
+        url += "/library/getFavouriteBooks?userId=" + ((Client)getActivity()).getCurrentUser().getId();
+
+        ServerRequestGET<List<Book>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Book.class),
+                new AsyncResponse<List<Book>>() {
+                    @Override
+                    public void actionCompleted(List<Book> res) {
+                        if (res == null) res = new ArrayList<>();
+                        favouriteBooks = res;
+                        adapter = new CustomAdapterBooks(favouriteBooks, getContext());
+                        lv.setAdapter(adapter);
+                    }
+                });
+
+        theServerRequest.execute();
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                MiscFunctions.CreateAlertDialog(favouriteListFragment.getActivity(), favouriteBooks.get(position), -1);
+            }
+        });
+
 
         return rootView;
 
     }
 
-    public void bindListView() {
-        new GetLibraryInformation(getActivity(),lv).execute("");
-    }
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if ( this.isVisible() )
+        {
+            if ( isVisibleToUser )
+            {
+                String url = ServerProperties.HOST;
+                url += "/library/getFavouriteBooks?userId=" + ((Client)getActivity()).getCurrentUser().getId();
 
+                ServerRequestGET<List<Book>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Book.class),
+                        new AsyncResponse<List<Book>>() {
+                            @Override
+                            public void actionCompleted(List<Book> res) {
+                                if (res == null) res = new ArrayList<>();
+                                favouriteBooks = res;
+                                adapter.refresh(favouriteBooks);
+                            }
+                        });
 
-    class GetLibraryInformation extends AsyncTask<Object, Void, JSONArray> {
-        ListView mListView;
-        Activity mContext;
-
-
-        public GetLibraryInformation(Activity context,ListView gview) {
-            this.mListView=gview;
-            this.mContext=context;
+                theServerRequest.execute();
+            }
         }
 
-        @Override
-        protected JSONArray doInBackground(Object... params) {
-            JSONArray jsonResponse = null;
-
-            // Get JSON data, all coming through fine
-            return jsonResponse;
-        }
-
-
-        @Override
-        protected void onPostExecute(JSONArray result) {
-            mTasksData = result;
-            /*String[] keys = {KEY_TITLE, KEY_AUTHOR };
-            int[] ids = { android.R.id.text1, android.R.id.text2 };
-            String author = "Mihaie Eminescu";*/
-            /*favoritesObjects = new ArrayList<>();
-
-            favoritesObjects.add(new FavoritesObject("Title", "Author.."));
-            favoritesObjects.add(new FavoritesObject("Title1", "Author1.."));
-            favoritesObjects.add(new FavoritesObject("Title2", "Author2.."));
-
-            adapter= new CustomAdapterBooks(favoritesObjects,getContext());*/
-
-            favouriteBooks = new ArrayList<>();
-
-            String url = ServerProperties.HOST;
-            url += "/library/getFavouriteBooks?userId=" + ((Client)getActivity()).getCurrentUser().getId();
-
-            ServerRequestGET<List<Book>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Book.class),
-                    new AsyncResponse<List<Book>>() {
-                        @Override
-                        public void actionCompleted(List<Book> res) {
-                            if (res == null) res = new ArrayList<>();
-                            favouriteBooks = res;
-                            adapter = new CustomAdapterBooks(favouriteBooks, getContext());
-                            lv.setAdapter(adapter);
-                        }
-                    });
-
-            theServerRequest.execute();
-
-            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                    Book selectedBook = favouriteBooks.get(position);
-
-                    Bitmap bm;
-                    if (selectedBook.getCover() == null) {
-                        bm = BitmapFactory.decodeResource(getResources(), R.drawable.default_book_image);
-                    } else {
-                        bm = BitmapFactory.decodeByteArray(selectedBook.getCover(), 0, selectedBook.getCover().length);
-                    }
-                    MiscFunctions.CreateAlertDialog(favouriteListFragment.getActivity(), bm, selectedBook.getTitle(), selectedBook.getAuthor().getName(), selectedBook.getDescription());
-
-
-                    //         Snackbar.make(view, favoritesObject.getName()+"\n"+ favoritesObject.getAuthor(), Snackbar.LENGTH_LONG)
-                    //                .setAction("No action", null).show();
-                }
-            });
-
-        }
     }
 }

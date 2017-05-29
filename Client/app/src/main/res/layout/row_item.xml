@@ -11,6 +11,7 @@
         android:layout_height="100dp"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
+        android:scaleType="centerCrop"
         android:src="@drawable/default_book_image" />
 
 

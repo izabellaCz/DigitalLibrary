@@ -85,34 +85,34 @@ public class LogIn extends AppCompatActivity {
             /*Intent intent = new Intent(getApplicationContext(), Administrator.class);
             startActivity(intent);*/
 
-        String url = ServerProperties.HOST;
-        url += "/user/login?username=";
-        url += emailView.getText();
-        url += "&password=";
-        url += md5(passwordView.getText().toString());
-        ServerRequestGET<User> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(User.class),
-                new AsyncResponse<User>() {
-                    @Override
-                    public void actionCompleted(User obj) {
-                        if (obj == null) {
-                            MiscFunctions.CreateToast(getApplicationContext(),"Login failed.");
-                            passwordView.setText("");
-                        }
-                        else {
-                            if ( obj.getType().equals("ADMINISTRATOR") ) {
-                                Intent intent = new Intent(getApplicationContext(), Administrator.class);
-                                intent.putExtra("currentUser", obj);
-                                startActivity(intent);
-                            } else {
-                                Intent intent = new Intent(getApplicationContext(), Client.class);
-                                intent.putExtra("currentUser", obj);
-                                startActivity(intent);
+            String url = ServerProperties.HOST;
+            url += "/user/login?username=";
+            url += emailView.getText();
+            url += "&password=";
+            url += md5(passwordView.getText().toString());
+            ServerRequestGET<User> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(User.class),
+                    new AsyncResponse<User>() {
+                        @Override
+                        public void actionCompleted(User obj) {
+                            if (obj == null) {
+                                MiscFunctions.CreateToast(getApplicationContext(),"Login failed.");
+                                passwordView.setText("");
+                            }
+                            else {
+                                if ( obj.getType().equals("ADMINISTRATOR") ) {
+                                    Intent intent = new Intent(getApplicationContext(), Administrator.class);
+                                    intent.putExtra("currentUser", obj);
+                                    startActivity(intent);
+                                } else {
+                                    Intent intent = new Intent(getApplicationContext(), Client.class);
+                                    intent.putExtra("currentUser", obj);
+                                    startActivity(intent);
+                                }
                             }
                         }
-                    }
-                });
+                    });
 
-        theServerRequest.execute();
+            theServerRequest.execute();
 
     }
 

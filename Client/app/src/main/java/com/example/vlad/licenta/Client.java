@@ -33,14 +33,6 @@ public class Client extends AppCompatActivity {
 
     private User currentUser;
 
-
-
-
-
-
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,12 +55,6 @@ public class Client extends AppCompatActivity {
 
 
     }
-
-
-
-
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
