@@ -34,7 +34,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-public class Administrator extends AppCompatActivity implements View.OnClickListener{
+public class Administrator extends AppCompatActivity implements View.OnClickListener, LoggedInActivity{
 
     int CAMERA_REQUEST =1;
 

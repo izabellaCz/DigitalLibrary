@@ -12,11 +12,13 @@ public class Book {
     private int total;
     private int available;
     private byte[] cover;
+    private History history;
+    private boolean favourite;
 
     public Book() {
     }
 
-    public Book(int id, String title, Author author, String publisher, String description, int total, int available, byte[] cover) {
+    public Book(int id, String title, Author author, String publisher, String description, int total, int available, byte[] cover, History history, boolean favourite) {
         this.id = id;
         this.title = title;
         this.author = author;
@@ -25,6 +27,8 @@ public class Book {
         this.total = total;
         this.available = available;
         this.cover = cover;
+        this.history = history;
+        this.favourite = favourite;
     }
 
     public int getId() {
@@ -89,5 +93,21 @@ public class Book {
 
     public void setCover(byte[] cover) {
         this.cover = cover;
+    }
+
+    public History getHistory() {
+        return history;
+    }
+
+    public void setHistory(History history) {
+        this.history = history;
+    }
+
+    public boolean isFavourite() {
+        return favourite;
+    }
+
+    public void setFavourite(boolean favourite) {
+        this.favourite = favourite;
     }
 }

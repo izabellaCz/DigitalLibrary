@@ -64,7 +64,7 @@ public class FavouritesList extends Fragment {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MiscFunctions.CreateAlertDialog(favouriteListFragment.getActivity(), favouriteBooks.get(position), -1);
+                MiscFunctions.CreateAlertDialog(favouriteListFragment.getActivity(), favouriteBooks.get(position));
             }
         });
 

@@ -1,9 +1,5 @@
 package com.example.vlad.licenta;
 
-import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,7 +10,6 @@ import android.widget.ListView;
 
 import com.example.vlad.licenta.model.Book;
 import com.example.vlad.licenta.model.History;
-import com.example.vlad.licenta.model.User;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import org.json.JSONArray;
@@ -27,7 +22,7 @@ public class HistoryList extends Fragment {
     ListView lv;
     private final String KEY_TITLE = "Title";
     private final String KEY_AUTHOR = "Author";
-    List<History> historyObjects;
+    List<Book> booksInHistory;
     private static CustomAdapterHistoryBooks adapter;
     public static Fragment historyListFragment;
 
@@ -45,22 +40,19 @@ public class HistoryList extends Fragment {
 
         historyListFragment = this;
 
-        historyObjects = new ArrayList<>();
+        booksInHistory = new ArrayList<>();
 
         String url = ServerProperties.HOST;
-        if ( getActivity() instanceof Client )
-            url += "/library/getUserHistory?userId=" + ((Client)getActivity()).getCurrentUser().getId();
-        else
-            url += "/library/getUserHistory?userId=" + ((Administrator)getActivity()).getCurrentUser().getId();
+        url += "/library/getUserHistory?userId="
+                + ((LoggedInActivity) getActivity()).getCurrentUser().getId();
 
-
-        ServerRequestGET<List<History>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, History.class),
-                new AsyncResponse<List<History>>() {
+        ServerRequestGET<List<Book>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Book.class),
+                new AsyncResponse<List<Book>>() {
                     @Override
-                    public void actionCompleted(List<History> res) {
+                    public void actionCompleted(List<Book> res) {
                         if (res == null) res = new ArrayList<>();
-                        historyObjects = res;
-                        adapter = new CustomAdapterHistoryBooks(historyObjects, getContext());
+                        booksInHistory = res;
+                        adapter = new CustomAdapterHistoryBooks(booksInHistory, getContext());
                         lv.setAdapter(adapter);
                     }
                 });
@@ -71,27 +63,8 @@ public class HistoryList extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                final Book selectedBook = historyObjects.get(position).getBook();
-
-                String url = ServerProperties.HOST;
-                url += "/library/isFavourite";
-                if ( historyListFragment.getActivity() instanceof Client )
-                    url += "?userId=" + ((Client)historyListFragment.getActivity()).getCurrentUser().getId();
-                else
-                    url += "?userId=" + ((Administrator)historyListFragment.getActivity()).getCurrentUser().getId();
-
-                url += "&bookId=" + historyObjects.get(position).getId();
-
-                ServerRequestGET<String> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(String.class),
-                        new AsyncResponse<String>() {
-                            @Override
-                            public void actionCompleted(String obj) {
-                                if ( obj != null && obj.compareTo("1") == 0 )
-                                    MiscFunctions.CreateAlertDialog(historyListFragment.getActivity(), selectedBook, Integer.parseInt(obj));
-                            }
-                        });
-
-                theServerRequest.execute();
+                final Book selectedBook = booksInHistory.get(position);
+                MiscFunctions.CreateAlertDialog(historyListFragment.getActivity(), selectedBook);
 
             }
         });
@@ -107,15 +80,16 @@ public class HistoryList extends Fragment {
         {
             if ( isVisibleToUser ) {
                 String url = ServerProperties.HOST;
-                url += "/library/list";
+                url += "/library/list?userId=";
+                url += ((LoggedInActivity)getActivity()).getCurrentUser().getId();
 
-                ServerRequestGET<List<History>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, History.class),
-                        new AsyncResponse<List<History>>() {
+                ServerRequestGET<List<Book>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Book.class),
+                        new AsyncResponse<List<Book>>() {
                             @Override
-                            public void actionCompleted(List<History> res) {
+                            public void actionCompleted(List<Book> res) {
                                 if (res == null) res = new ArrayList<>();
-                                historyObjects = res;
-                                adapter.refresh(historyObjects);
+                                booksInHistory = res;
+                                adapter.refresh(booksInHistory);
                             }
                         });
 

@@ -1,6 +1,8 @@
 package com.example.vlad.licenta;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class CustomAdapterHistoryBooks extends ArrayAdapter<History> implements View.OnClickListener{
+public class CustomAdapterHistoryBooks extends ArrayAdapter<Book> implements View.OnClickListener{
 
-    private List<History> dataSet;
+    private List<Book> dataSet;
     Context mContext;
 
     // View lookup cache
@@ -28,14 +30,14 @@ public class CustomAdapterHistoryBooks extends ArrayAdapter<History> implements 
         ImageView info;
     }
 
-    public CustomAdapterHistoryBooks(List<History> data, Context context) {
+    public CustomAdapterHistoryBooks(List<Book> data, Context context) {
         super(context, R.layout.row_item, data);
         this.dataSet = data;
         this.mContext=context;
     }
 
 
-    public void refresh(List<History> data)
+    public void refresh(List<Book> data)
     {
         this.dataSet = data;
         notifyDataSetChanged();
@@ -61,7 +63,7 @@ public class CustomAdapterHistoryBooks extends ArrayAdapter<History> implements 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-       History historyObject = getItem(position);
+       Book currentBook = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         ViewHolder viewHolder; // view lookup cache stored in tag
 
@@ -89,11 +91,21 @@ public class CustomAdapterHistoryBooks extends ArrayAdapter<History> implements 
 //        result.startAnimation(animation);
         lastPosition = position;
 
-        viewHolder.txtName.setText(historyObject.getBook().getTitle());
-        viewHolder.txtType.setText(historyObject.getBook().getAuthor().getName());
-        viewHolder.txtDay.setText(historyObject.getLoanDate().toString());        // getDaysToReturn());
+        viewHolder.txtName.setText(currentBook.getTitle());
+        viewHolder.txtType.setText(currentBook.getAuthor().getName());
+        viewHolder.txtDay.setText(currentBook.getHistory().getLoanDate().toString());        // getDaysToReturn());
+        Bitmap bm;
+        if (currentBook.getCover() == null || currentBook.getCover().length == 0) {
+            bm = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.default_book_image);
+        } else {
+            bm = BitmapFactory.decodeByteArray(currentBook.getCover(), 0, currentBook.getCover().length);
+        }
+
+        viewHolder.info.setImageBitmap(bm);
+
         viewHolder.info.setOnClickListener(this);
         viewHolder.info.setTag(position);
+
         // Return the completed view to render on screen
         return convertView;
     }

@@ -2,7 +2,6 @@ package com.example.vlad.licenta;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -86,7 +85,7 @@ public class MiscFunctions {
     }
 
 
-    public static int CreateAlertDialog(final Activity activ, final Book book, final int isFavourite)
+    public static int CreateAlertDialog(final Activity activ, final Book book)
     {
 
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activ);
@@ -136,18 +135,13 @@ public class MiscFunctions {
             }
         });
 
-        if ( isFavourite != -1 ) {
-            dialogBuilder.setNeutralButton(isFavourite == 0 ? "Add To Fav" : "Remove from Fav", new DialogInterface.OnClickListener() {
+            dialogBuilder.setNeutralButton(!book.isFavourite() ? "Add To Fav" : "Remove from Fav", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     String url = ServerProperties.HOST;
                     url += "/library";
-                    url += isFavourite == 0 ? "/addFavourite" : "/removeFavourite";
+                    url += !book.isFavourite() ? "/addFavourite" : "/removeFavourite";
 
-                    if (activ instanceof Client)
-                        url += "?userId=" + ((Client) activ).getCurrentUser().getId();
-                    else
-                        url += "?userId=" + ((Administrator) activ).getCurrentUser().getId();
-
+                    url += "?userId=" + ((LoggedInActivity)activ).getCurrentUser().getId();
                     url += "&bookId=" + book.getId();
 
                     ServerRequestGET<String> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(String.class),
@@ -165,7 +159,6 @@ public class MiscFunctions {
                     theServerRequest.execute();
                 }
             });
-        }
 
 
         AlertDialog b = dialogBuilder.create();

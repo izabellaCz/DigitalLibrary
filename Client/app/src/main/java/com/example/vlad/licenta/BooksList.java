@@ -44,7 +44,8 @@ public class BooksList extends Fragment {
         listOfBooks = new ArrayList<>();
 
         String url = ServerProperties.HOST;
-        url += "/library/list";
+        url += "/library/list?userId=";
+        url += ((LoggedInActivity)getActivity()).getCurrentUser().getId();
 
         ServerRequestGET<List<Book>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Book.class),
                 new AsyncResponse<List<Book>>() {
@@ -67,12 +68,8 @@ public class BooksList extends Fragment {
                 final Book selectedBook = listOfBooks.get(position);
 
                 String url = ServerProperties.HOST;
-                url += "/library/isFavourite";
-                if ( booksListFragment.getActivity() instanceof Client )
-                    url += "?userId=" + ((Client)booksListFragment.getActivity()).getCurrentUser().getId();
-                else
-                    url += "?userId=" + ((Administrator)booksListFragment.getActivity()).getCurrentUser().getId();
-
+                url += "/library/isFavourite?userId=";
+                url += ((LoggedInActivity) getActivity()).getCurrentUser().getId();
                 url += "&bookId=" + listOfBooks.get(position).getId();
 
                 final int[] isFavourite = {0};
@@ -82,7 +79,7 @@ public class BooksList extends Fragment {
                             public void actionCompleted(String obj) {
                                 if ( obj != null && obj.compareTo("1") == 0 )
                                     isFavourite[0] = 1;
-                                MiscFunctions.CreateAlertDialog(booksListFragment.getActivity(), selectedBook, isFavourite[0]);
+                                MiscFunctions.CreateAlertDialog(booksListFragment.getActivity(), selectedBook);
                             }
                         });
 
@@ -122,7 +119,8 @@ public class BooksList extends Fragment {
         {
             if ( isVisibleToUser ) {
                 String url = ServerProperties.HOST;
-                url += "/library/list";
+                url += "/library/list?userId=";
+                url += ((LoggedInActivity) getActivity()).getCurrentUser().getId();
 
                 ServerRequestGET<List<Book>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Book.class),
                         new AsyncResponse<List<Book>>() {

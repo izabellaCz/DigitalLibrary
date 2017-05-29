@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.example.vlad.licenta.model.User;
 
-public class Client extends AppCompatActivity {
+public class Client extends AppCompatActivity implements LoggedInActivity{
 
 
 
