@@ -1,0 +1,69 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+
+    <ImageView
+        android:id="@+id/book_image"
+        android:layout_width="75dp"
+        android:layout_height="100dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/default_book_image" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_toRightOf="@+id/book_image">
+
+
+        <TextView
+            android:id="@+id/book_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerInParent="true"
+            android:text="Luceafarul"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@android:color/black"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/blank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_below="@+id/book_title"
+            android:textAppearance="?android:attr/textAppearanceSmallInverse"
+            android:textColor="@android:color/black"/>
+
+        <TextView
+            android:id="@+id/book_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/blank"
+            android:text="Misu"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@android:color/black" />
+        <TextView
+            android:id="@+id/blank1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_below="@+id/book_title"
+            android:textAppearance="?android:attr/textAppearanceSmallInverse"
+            android:textColor="@android:color/black"/>
+        <TextView
+            android:id="@+id/book_days"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_below="@+id/book_title"
+            android:textAppearance="?android:attr/textAppearanceSmallInverse"
+            android:textColor="@android:color/black"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

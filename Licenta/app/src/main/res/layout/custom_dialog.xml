@@ -1,0 +1,29 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    android:orientation="vertical">
+
+
+
+        <ImageView
+            android:id="@+id/book_image_dialog"
+            android:layout_width="75dp"
+            android:layout_height="100dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/default_book_image" />
+
+        <TextView
+            android:id="@+id/book_description_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/book_image_dialog"
+            android:text="descriere..."
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@android:color/black" />
+
+
+</RelativeLayout>
