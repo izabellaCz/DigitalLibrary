@@ -9,7 +9,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.vlad.licenta.model.Book;
-import com.example.vlad.licenta.model.History;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import org.json.JSONArray;
@@ -64,7 +63,7 @@ public class HistoryList extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 final Book selectedBook = booksInHistory.get(position);
-                MiscFunctions.CreateAlertDialog(historyListFragment.getActivity(), selectedBook);
+                MiscFunctions.createAlertDialog(historyListFragment.getActivity(), selectedBook);
 
             }
         });

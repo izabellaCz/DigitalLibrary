@@ -176,7 +176,7 @@ public class AdministratorAddBook extends AppCompatActivity {
         }
 
         if (spinnerItemSelected.compareTo("") == 0 || spinnerItemSelected.compareTo("Choose author") == 0) {
-            MiscFunctions.CreateToast(getApplicationContext(), "Please provide an author for the book.");
+            MiscFunctions.createToast(getApplicationContext(), "Please provide an author for the book.");
             return;
         }
 
@@ -227,9 +227,9 @@ public class AdministratorAddBook extends AppCompatActivity {
                     @Override
                     public void actionCompleted(String obj) {
                         if ( obj.compareTo("1") == 0 )
-                            MiscFunctions.CreateToast(getApplicationContext(), "Book add: Success");
+                            MiscFunctions.createToast(getApplicationContext(), "Book add: Success");
                         else
-                            MiscFunctions.CreateToast(getApplicationContext(), "Book add: Fail");
+                            MiscFunctions.createToast(getApplicationContext(), "Book add: Fail");
                     }
                 });
 

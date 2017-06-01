@@ -2,28 +2,26 @@ package com.example.vlad.licenta;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.design.widget.TabLayout;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
-
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.vlad.licenta.model.Author;
+import com.example.vlad.licenta.model.QRTransaction;
 import com.example.vlad.licenta.model.User;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -31,8 +29,6 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
 
 public class Administrator extends AppCompatActivity implements View.OnClickListener, LoggedInActivity{
 
@@ -46,7 +42,6 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
     private ViewPager mViewPager;
 
     private User currentUser;
-
 
     private Boolean isFabOpen = false;
     private FloatingActionButton fab_settings, fab_add_book, fab_scan;
@@ -63,11 +58,6 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         mViewPager.setCurrentItem(1, true);
-        final Activity activity=this;
-
-
-        currentUser = (User) getIntent().getSerializableExtra("currentUser");
-
 
         mSectionsPagerAdapter = new AdministratorTabs(getSupportFragmentManager());
         mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -88,6 +78,8 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
         fab_add_book.setOnClickListener(this);
         fab_scan.setOnClickListener(this);
 
+        currentUser = (User) getIntent().getSerializableExtra("currentUser");
+
     }
 
     @Override
@@ -98,18 +90,33 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
                 Toast.makeText(this, "You cancelled the scanning", Toast.LENGTH_LONG).show();
 
             } else {
+                /**
+                 * Rent/Return Book - "approve" by Administrator
+                 */
                 String scanResult = result.getContents();
                 Toast.makeText(this, scanResult, Toast.LENGTH_LONG).show();
 
                 String[] tokenizer = scanResult.split(",");
 
-                int userId = Integer.parseInt(tokenizer[0]);
-                int bookId = Integer.parseInt(tokenizer[1]);
-                SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                Date now = new Date();
-                String strDate = sdfDate.format(now);
+                String userId, bookId;
+                QRTransaction transactionType;
+                try {
+                    transactionType = QRTransaction.valueOf(tokenizer[0]);
+                    userId = tokenizer[1];
+                    bookId = tokenizer[2];
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    MiscFunctions.createToast(this.getApplicationContext(), "Invalid QR Code");
+                    return;
+                }
 
-
+                switch (transactionType) {
+                    case RENT:
+                        MiscFunctions.rentBook(this, userId, bookId);
+                        break;
+                    case RETURN:
+                        MiscFunctions.returnBook(this, userId, bookId);
+                        break;
+                }
 
             }
         } else {
@@ -117,10 +124,6 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
         }
 
     }
-
-
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

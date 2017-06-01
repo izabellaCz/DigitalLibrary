@@ -5,8 +5,10 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.vlad.licenta.model.Book;
+import com.example.vlad.licenta.model.QRTransaction;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
@@ -22,14 +25,20 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 public class MiscFunctions {
+    public final static long MILLISECONDS_IN_DAY = 24 * 60 * 60 * 1000;
+    public final static int LOAN_DAYS = 30;
+
     public static ImageView image;
 
-
-
-    public static Bitmap QrGenerate(int currentUserId, Book book) {
-        String text2Qr=Integer.toString(currentUserId).concat(",").concat(Integer.toString(book.getId())).concat(",").concat(book.getTitle()).concat(",").concat(book.getAuthor().getName());
+    public static Bitmap qrGenerate(QRTransaction transactionType, int currentUserId, Book book) {
+        String text2Qr = transactionType.toString() + "," +
+                Integer.toString(currentUserId) + "," +
+                Integer.toString(book.getId());
 
         MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
         try{
@@ -46,9 +55,30 @@ public class MiscFunctions {
         }
     }
 
-    public static int CreateRentAlertDialog(final Activity activity, final int userId, final int bookId, final String strDate)
-    {
-        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
+    public static void rentBook(final Activity activity, final String userId, final String bookId) {
+        /**
+         * Request ca sa nu punem si cover-ul in QR
+         */
+        String url = ServerProperties.HOST + "/library/getById?userId=" + userId
+                + "&bookId=" + bookId;
+
+        ServerRequestGET<Book> getBookById = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(Book.class),
+                new AsyncResponse<Book>() {
+                    @Override
+                    public void actionCompleted(Book obj) {
+                        if (obj != null) {
+                            MiscFunctions.createRentAlertDialog(activity, userId, obj);
+                        } else {
+                            // TODO : treat case - book not found
+                        }
+                    }
+                });
+
+        getBookById.execute();
+    }
+
+    private static int createRentAlertDialog(final Activity activity, final String userId, final Book book) {
+ /*       final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
 
         dialogBuilder.setTitle("Rent Book");
 
@@ -73,7 +103,7 @@ public class MiscFunctions {
                         new AsyncResponse<String>() {
                             @Override
                             public void actionCompleted(String obj) {
-                                MiscFunctions.CreateToast(activity.getApplicationContext(), "Book rent: Successful");
+                                MiscFunctions.createToast(activity.getApplicationContext(), "Book rent: Successful");
                             }
                         });
 
@@ -81,12 +111,164 @@ public class MiscFunctions {
             }
         });
 
+        return 0;*/
+
+
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
+        final LayoutInflater inflater = activity.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.custom_dialog_book_details, null);
+        dialogBuilder.setView(dialogView);
+
+        final TextView tvDescription = (TextView) dialogView.findViewById(R.id.book_description_dialog);
+        final ImageView imageBook = (ImageView) dialogView.findViewById(R.id.book_image_dialog);
+
+        Bitmap bm;
+        if (book.getCover() == null) {
+            bm = BitmapFactory.decodeResource(activity.getResources(), R.drawable.default_book_image);
+        } else {
+            bm = BitmapFactory.decodeByteArray(book.getCover(), 0, book.getCover().length);
+        }
+
+        imageBook.setImageBitmap(bm);
+
+        dialogBuilder.setTitle(book.getTitle());
+        dialogBuilder.setMessage(book.getAuthor().getName());
+
+        tvDescription.setText(book.getDescription());
+        tvDescription.setMovementMethod(new ScrollingMovementMethod());
+
+        dialogBuilder.setPositiveButton("Approve", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String url = ServerProperties.HOST;
+                url += "/library/rentBook?userId=" + userId
+                        + "&bookId=" + book.getId()
+                        + "&loanDate=" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+
+                ServerRequestGET<String> rentBookRequest = new ServerRequestGET<String>(url, TypeFactory.defaultInstance().constructType(String.class),
+                        new AsyncResponse<String>() {
+                            @Override
+                            public void actionCompleted(String obj) {
+                                if (obj != null && obj.equals("1")) {
+                                    MiscFunctions.createToast(activity.getApplication(), "Book rent successful");
+                                } else {
+                                    MiscFunctions.createToast(activity.getApplication(), "Book rent unsuccessful \n" + obj);
+                                }
+                            }
+                        });
+                rentBookRequest.execute();
+
+            }
+
+
+        });
+
+        dialogBuilder.setNegativeButton("Deny", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //pass
+            }
+        });
+
+        AlertDialog b = dialogBuilder.create();
+        b.setCanceledOnTouchOutside(false);
+        b.show();
+
         return 0;
     }
 
+    public static int returnBook(final Activity activity, final String userId, final String bookId) {
 
-    public static int CreateAlertDialog(final Activity activ, final Book book)
-    {
+        /**
+         * Get info from server
+         */
+
+        String url = ServerProperties.HOST + "/library/getLoanInfo" +
+                "?userId=" + userId +
+                "&bookId=" + bookId;
+        ServerRequestGET<Book> getBook = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(Book.class),
+                new AsyncResponse<Book>() {
+                    @Override
+                    public void actionCompleted(Book obj) {
+                        if (obj != null) {
+                            MiscFunctions.createReturnAlertDialog(activity, obj);
+                        } else {
+                            MiscFunctions.createToast(activity.getApplicationContext(), "Invalid history data");
+                        }
+                    }
+                });
+        getBook.execute();
+
+
+        return 0;
+    }
+
+    private static int createReturnAlertDialog(final Activity activity, final Book book) {
+
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
+        final LayoutInflater inflater = activity.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.custom_dialog_book_details, null);
+        dialogBuilder.setView(dialogView);
+
+        final TextView tvDescription = (TextView) dialogView.findViewById(R.id.book_description_dialog);
+        final ImageView imageBook = (ImageView) dialogView.findViewById(R.id.book_image_dialog);
+
+        Bitmap bm;
+        if (book.getCover() == null) {
+            bm = BitmapFactory.decodeResource(activity.getResources(), R.drawable.default_book_image);
+        } else {
+            bm = BitmapFactory.decodeByteArray(book.getCover(), 0, book.getCover().length);
+        }
+
+        imageBook.setImageBitmap(bm);
+
+        dialogBuilder.setTitle(book.getTitle());
+        dialogBuilder.setMessage(book.getAuthor().getName());
+
+        tvDescription.setText(book.getDescription());
+        tvDescription.setMovementMethod(new ScrollingMovementMethod());
+
+        dialogBuilder.setPositiveButton("Approve", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String url = ServerProperties.HOST;
+                url += "/library/returnBook?historyId=" + book.getHistory().getId()
+                        + "&returnDate=" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+
+                ServerRequestGET<String> returnBookRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(String.class),
+                        new AsyncResponse<String>() {
+                            @Override
+                            public void actionCompleted(String obj) {
+                                if (obj != null && obj.equals("1")) {
+                                    MiscFunctions.createToast(activity.getApplication(), "Book return successful");
+                                } else {
+                                    MiscFunctions.createToast(activity.getApplication(), "Book return unsuccessful \n" + obj);
+                                }
+                            }
+                        });
+                returnBookRequest.execute();
+
+            }
+
+
+        });
+
+        dialogBuilder.setNegativeButton("Deny", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //pass
+            }
+        });
+
+        AlertDialog b = dialogBuilder.create();
+        b.setCanceledOnTouchOutside(false);
+        b.show();
+
+        return 0;
+    }
+
+    /**
+     * When tapped on a book in the list
+     */
+    public static int createAlertDialog(final Activity activ, final Book book) {
 
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activ);
         final LayoutInflater inflater = activ.getLayoutInflater();
@@ -95,8 +277,10 @@ public class MiscFunctions {
 
         final TextView tvDescription = (TextView) dialogView.findViewById(R.id.book_description_dialog);
         final ImageView imageBook = (ImageView) dialogView.findViewById(R.id.book_image_dialog);
+        TextView tvLoanDate = (TextView) dialogView.findViewById(R.id.loan_date_dialog);
+        TextView tvReturnDays = (TextView) dialogView.findViewById(R.id.return_days_dialog);
 
-        Bitmap bm;
+        final Bitmap bm;
         if (book.getCover() == null) {
             bm = BitmapFactory.decodeResource(activ.getResources(), R.drawable.default_book_image);
         } else {
@@ -111,23 +295,47 @@ public class MiscFunctions {
         tvDescription.setText(book.getDescription());
         tvDescription.setMovementMethod(new ScrollingMovementMethod());
 
-        dialogBuilder.setPositiveButton("Generate QR Code", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                int currUserId = -1;
+        if (book.getHistory().getLoanDate() != null) {
+            tvLoanDate.setText("Rented on: \n"
+                    + book.getHistory().getLoanDate().toString().substring(0, 10));
 
-                if ( activ instanceof Client )
-                    currUserId = ((Client) activ).getCurrentUser().getId();
-                else
-                    currUserId = ((Administrator)activ).getCurrentUser().getId();
-
-                Intent intent = new Intent (activ, qrGeneratePage.class);
-                intent.putExtra("bitmap", QrGenerate(currUserId, book));
-                activ.startActivity(intent);
+            if (book.getHistory().getReturnDate() == null) {
+                int days = (int) ((book.getHistory().getLoanDate().getTime() - new java.sql.Date(new Date().getTime()).getTime()) / MILLISECONDS_IN_DAY);
+                days += LOAN_DAYS;
+                tvReturnDays.setText("Days left: \n"
+                        + String.valueOf(days));
+                if (days <= 5) tvReturnDays.setTextColor(Color.rgb(255, 0, 0));
+                else if (days <= 10) tvReturnDays.setTextColor(Color.rgb(255, 102, 102));
+                else tvReturnDays.setTextColor(Color.rgb(0, 204, 0));
+            } else {
+                tvReturnDays.setText("Returned");
+                tvReturnDays.setTextColor(Color.rgb(40, 60, 200));
             }
+        }
 
+        if (book.getHistory().getLoanDate() != null && book.getHistory().getReturnDate() == null) {
+            /* to be returned */
+            dialogBuilder.setPositiveButton("Return Book", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent (activ, qrGeneratePage.class);
+                    intent.putExtra("bitmap", qrGenerate(QRTransaction.RETURN, ((LoggedInActivity) activ).getCurrentUser().getId(), book));
+                    activ.startActivity(intent);
+                }
+            });
+        } else {
 
-        });
+            /* to be rented */
+            dialogBuilder.setPositiveButton("Rent Book", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent (activ, qrGeneratePage.class);
+                    intent.putExtra("bitmap", qrGenerate(QRTransaction.RENT, ((LoggedInActivity) activ).getCurrentUser().getId(), book));
+                    activ.startActivity(intent);
+                }
+            });
+        }
+
 
         dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
@@ -135,80 +343,115 @@ public class MiscFunctions {
             }
         });
 
-            dialogBuilder.setNeutralButton(!book.isFavourite() ? "Add To Fav" : "Remove from Fav", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    String url = ServerProperties.HOST;
-                    url += "/library";
-                    url += !book.isFavourite() ? "/addFavourite" : "/removeFavourite";
+        dialogBuilder.setNeutralButton(!book.isFavourite() ? "Add To Fav" : "Remove from Fav", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String url = ServerProperties.HOST;
+                url += "/library";
+                url += !book.isFavourite() ? "/addFavourite" : "/removeFavourite";
 
-                    url += "?userId=" + ((LoggedInActivity)activ).getCurrentUser().getId();
-                    url += "&bookId=" + book.getId();
+                url += "?userId=" + ((LoggedInActivity)activ).getCurrentUser().getId();
+                url += "&bookId=" + book.getId();
 
-                    ServerRequestGET<String> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(String.class),
-                            new AsyncResponse<String>() {
-                                @Override
-                                public void actionCompleted(String obj) {
-                                    if (obj != null && obj.compareTo("1") == 0)
-                                        MiscFunctions.CreateToast(activ.getApplicationContext(), "Success");
-                                    else
-                                        MiscFunctions.CreateToast(activ.getApplicationContext(), "Failed");
+                ServerRequestGET<String> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(String.class),
+                        new AsyncResponse<String>() {
+                            @Override
+                            public void actionCompleted(String obj) {
+                                if (obj != null && obj.compareTo("1") == 0)
+                                    MiscFunctions.createToast(activ.getApplicationContext(), "Success");
+                                else
+                                    MiscFunctions.createToast(activ.getApplicationContext(), "Failed");
 
-                                }
-                            });
+                            }
+                        });
 
-                    theServerRequest.execute();
-                }
-            });
+                theServerRequest.execute();
+            }
+        });
 
 
         AlertDialog b = dialogBuilder.create();
         b.setCanceledOnTouchOutside(false);
         b.show();
 
-
-
         return 0;
     }
 
+    public static int createHistoryAlertDialog(final Activity activity, final Book book) {
 
-
-    public static int CreateHistoryAlertDialog(Activity activ, Bitmap image, String title, String author, String description)
-    {
-
-        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activ);
-        LayoutInflater inflater = activ.getLayoutInflater();
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
+        final LayoutInflater inflater = activity.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.custom_dialog_book_details, null);
         dialogBuilder.setView(dialogView);
 
         final TextView tvDescription = (TextView) dialogView.findViewById(R.id.book_description_dialog);
         final ImageView imageBook = (ImageView) dialogView.findViewById(R.id.book_image_dialog);
 
-        tvDescription.setText(description);
-        //  imageBook.setImageBitmap(image);
-        //String asd =   dialogView.findViewById(R.id.book_author).toString();
-        dialogBuilder.setTitle(title);
-        dialogBuilder.setMessage(author);
-        /*
-        dialogBuilder.setPositiveButton("Generate QR Code", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                String text2Qr ="vlad are mere";
-                MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
-                try{
-                    BitMatrix bitMatrix = multiFormatWriter.encode(text2Qr, BarcodeFormat.QR_CODE,200,200);
-                    BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-                    Bitmap bitmaps = barcodeEncoder.createBitmap(bitMatrix);
-                    imageBook.setImageBitmap(bitmaps);
+        final Bitmap bm;
+        if (book.getCover() == null) {
+            bm = BitmapFactory.decodeResource(activity.getResources(), R.drawable.default_book_image);
+        } else {
+            bm = BitmapFactory.decodeByteArray(book.getCover(), 0, book.getCover().length);
+        }
 
+        imageBook.setImageBitmap(bm);
+
+        dialogBuilder.setTitle(book.getTitle());
+        dialogBuilder.setMessage(book.getAuthor().getName());
+
+        tvDescription.setText(book.getDescription());
+        tvDescription.setMovementMethod(new ScrollingMovementMethod());
+
+        if (book.getHistory().getLoanDate() != null && book.getHistory().getReturnDate() == null) {
+            /* to be returned */
+            dialogBuilder.setPositiveButton("Return Book", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent (activity, qrGeneratePage.class);
+                    intent.putExtra("bitmap", qrGenerate(QRTransaction.RETURN, ((LoggedInActivity) activity).getCurrentUser().getId(), book));
+                    activity.startActivity(intent);
                 }
-                catch (WriterException e){
-                    e.printStackTrace();
+            });
+        } else {
+            /* to be rented */
+            dialogBuilder.setPositiveButton("Rent Book", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent (activity, qrGeneratePage.class);
+                    intent.putExtra("bitmap", qrGenerate(QRTransaction.RENT, ((LoggedInActivity) activity).getCurrentUser().getId(), book));
+                    activity.startActivity(intent);
                 }
-            }
-        });
-        */
+            });
+        }
+
+
         dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 //pass
+            }
+        });
+
+        dialogBuilder.setNeutralButton(!book.isFavourite() ? "Add To Fav" : "Remove from Fav", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String url = ServerProperties.HOST;
+                url += "/library";
+                url += !book.isFavourite() ? "/addFavourite" : "/removeFavourite";
+
+                url += "?userId=" + ((LoggedInActivity)activity).getCurrentUser().getId();
+                url += "&bookId=" + book.getId();
+
+                ServerRequestGET<String> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(String.class),
+                        new AsyncResponse<String>() {
+                            @Override
+                            public void actionCompleted(String obj) {
+                                if (obj != null && obj.compareTo("1") == 0)
+                                    MiscFunctions.createToast(activity.getApplicationContext(), "Success");
+                                else
+                                    MiscFunctions.createToast(activity.getApplicationContext(), "Failed");
+
+                            }
+                        });
+
+                theServerRequest.execute();
             }
         });
 
@@ -220,8 +463,7 @@ public class MiscFunctions {
         return 0;
     }
 
-    public static int CreateToast(Context context, String message)
-    {
+    public static int createToast(Context context, String message) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
         return 0;
     }

@@ -1,9 +1,5 @@
 package com.example.vlad.licenta;
 
-import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -64,7 +60,7 @@ public class FavouritesList extends Fragment {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MiscFunctions.CreateAlertDialog(favouriteListFragment.getActivity(), favouriteBooks.get(position));
+                MiscFunctions.createAlertDialog(favouriteListFragment.getActivity(), favouriteBooks.get(position));
             }
         });
 

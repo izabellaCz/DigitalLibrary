@@ -122,13 +122,13 @@ public class Register extends AppCompatActivity {
                         public void actionCompleted(String res) {
 
                             if(res.equals("1")) {
-                                MiscFunctions.CreateToast(getApplicationContext(), "Successfully registered!");
+                                MiscFunctions.createToast(getApplicationContext(), "Successfully registered!");
                                 Intent intent = new Intent(getApplicationContext(), LogIn.class);
                                 startActivity(intent);
                             }
                             else
                             {
-                                MiscFunctions.CreateToast(getApplicationContext(), "Email already registered!");
+                                MiscFunctions.createToast(getApplicationContext(), "Email already registered!");
                             }
                         }
                     });

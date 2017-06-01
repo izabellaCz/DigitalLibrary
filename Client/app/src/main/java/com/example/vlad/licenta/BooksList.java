@@ -79,7 +79,7 @@ public class BooksList extends Fragment {
                             public void actionCompleted(String obj) {
                                 if ( obj != null && obj.compareTo("1") == 0 )
                                     isFavourite[0] = 1;
-                                MiscFunctions.CreateAlertDialog(booksListFragment.getActivity(), selectedBook);
+                                MiscFunctions.createAlertDialog(booksListFragment.getActivity(), selectedBook);
                             }
                         });
 

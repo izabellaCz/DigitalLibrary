@@ -16,6 +16,31 @@
             android:layout_centerVertical="true"
             android:src="@drawable/default_book_image" />
 
+
+        <TextView
+            android:id="@+id/loan_date_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/book_image_dialog"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="16dp"
+            android:maxLines="2"
+            android:textAlignment="center"
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
+
+        <TextView
+            android:id="@+id/return_days_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textAlignment="center"
+            android:maxLines = "2"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_marginTop="17dp"
+            android:layout_below="@+id/loan_date_dialog"
+            android:layout_alignParentStart="true" />
+
         <TextView
             android:id="@+id/book_description_dialog"
             android:layout_width="wrap_content"

@@ -6,7 +6,6 @@ import java.security.NoSuchAlgorithmException;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
@@ -95,7 +94,7 @@ public class LogIn extends AppCompatActivity {
                         @Override
                         public void actionCompleted(User obj) {
                             if (obj == null) {
-                                MiscFunctions.CreateToast(getApplicationContext(),"Login failed.");
+                                MiscFunctions.createToast(getApplicationContext(),"Login failed.");
                                 passwordView.setText("");
                             }
                             else {
