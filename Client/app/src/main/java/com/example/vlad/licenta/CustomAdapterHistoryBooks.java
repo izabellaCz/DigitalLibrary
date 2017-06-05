@@ -73,7 +73,7 @@ public class CustomAdapterHistoryBooks extends ArrayAdapter<Book> implements Vie
 
             viewHolder = new ViewHolder();
             LayoutInflater inflater = LayoutInflater.from(getContext());
-            convertView = inflater.inflate(R.layout.row_item, parent, false);
+            convertView = inflater.inflate(R.layout.row_item_history, parent, false);
             viewHolder.txtName = (TextView) convertView.findViewById(R.id.book_title);
             viewHolder.txtType = (TextView) convertView.findViewById(R.id.book_author);
             viewHolder.txtDay = (TextView) convertView.findViewById(R.id.book_days);
