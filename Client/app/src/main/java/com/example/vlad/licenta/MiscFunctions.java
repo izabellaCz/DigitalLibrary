@@ -305,8 +305,8 @@ public class MiscFunctions {
                 tvReturnDays.setText("Days left: \n"
                         + String.valueOf(days));
                 if (days <= 5) tvReturnDays.setTextColor(Color.rgb(255, 0, 0));
-                else if (days <= 10) tvReturnDays.setTextColor(Color.rgb(255, 102, 102));
-                else tvReturnDays.setTextColor(Color.rgb(0, 204, 0));
+                else if (days <= 10) tvReturnDays.setTextColor(Color.rgb(255, 145, 0));
+                else tvReturnDays.setTextColor(Color.rgb(0, 128, 0));
             } else {
                 tvReturnDays.setText("Returned");
                 tvReturnDays.setTextColor(Color.rgb(40, 60, 200));
