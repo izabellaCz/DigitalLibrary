@@ -64,26 +64,7 @@ public class BooksList extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-
-                final Book selectedBook = listOfBooks.get(position);
-
-                String url = ServerProperties.HOST;
-                url += "/library/isFavourite?userId=";
-                url += ((LoggedInActivity) getActivity()).getCurrentUser().getId();
-                url += "&bookId=" + listOfBooks.get(position).getId();
-
-                final int[] isFavourite = {0};
-                ServerRequestGET<String> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(String.class),
-                        new AsyncResponse<String>() {
-                            @Override
-                            public void actionCompleted(String obj) {
-                                if ( obj != null && obj.compareTo("1") == 0 )
-                                    isFavourite[0] = 1;
-                                MiscFunctions.createAlertDialog(booksListFragment.getActivity(), selectedBook);
-                            }
-                        });
-
-                theServerRequest.execute();
+                MiscFunctions.createAlertDialog(booksListFragment.getActivity(), listOfBooks.get(position));
 
             }
         });
