@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -145,7 +144,7 @@ public class MiscFunctions {
     public static int returnBook(final Activity activity, final String userId, final String bookId) {
 
         /**
-         * Get info from server
+         * Get ivCover from server
          */
 
         String url = ServerProperties.HOST + "/library/getLoanInfo" +

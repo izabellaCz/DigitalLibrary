@@ -63,7 +63,7 @@ public class CustomAdapterBooks extends ArrayAdapter<Book> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        Book selectedBook = getItem(position);
+        final Book selectedBook = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         ViewHolder viewHolder; // view lookup cache stored in tag
 
