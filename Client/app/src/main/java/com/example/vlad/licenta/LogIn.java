@@ -60,8 +60,8 @@ public class LogIn extends AppCompatActivity {
     }
 
     public void logInMethod(View view){
-        emailView.setText("iza@iza.com");
-        passwordView.setText("password");
+        /*emailView.setText("iza@iza.com");
+        passwordView.setText("password");*/
 
         String email = emailView.getText().toString();
         String password = passwordView.getText().toString();
@@ -80,9 +80,6 @@ public class LogIn extends AppCompatActivity {
             passwordView.setText("");
             return;
         }
-
-            /*Intent intent = new Intent(getApplicationContext(), Administrator.class);
-            startActivity(intent);*/
 
             String url = ServerProperties.HOST;
             url += "/user/login?username=";

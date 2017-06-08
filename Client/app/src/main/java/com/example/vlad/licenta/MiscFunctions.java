@@ -174,11 +174,16 @@ public class MiscFunctions {
         final View dialogView = inflater.inflate(R.layout.custom_dialog_book_details, null);
         dialogBuilder.setView(dialogView);
 
-        TextView tvTitle = (TextView) dialogView.findViewById(R.id.book_description_dialog);
-        TextView tvAuthor = (TextView) dialogView.findViewById(R.id.book_description_dialog);
-
+        TextView tvTitle = (TextView) dialogView.findViewById(R.id.tv_title);
+        TextView tvAuthor = (TextView) dialogView.findViewById(R.id.tv_author);
         final TextView tvDescription = (TextView) dialogView.findViewById(R.id.book_description_dialog);
         final ImageView imageBook = (ImageView) dialogView.findViewById(R.id.book_image_dialog);
+
+        TextView tvLoanDate = (TextView) dialogView.findViewById(R.id.loan_date_dialog);
+        TextView tvReturnDays = (TextView) dialogView.findViewById(R.id.return_days_dialog);
+
+        final ImageButton addRemoveFavs = (ImageButton) dialogView.findViewById(R.id.ib_AddRemoveFav);
+        addRemoveFavs.setVisibility(View.GONE);
 
         Bitmap bm;
         if (book.getCover() == null) {
@@ -191,9 +196,27 @@ public class MiscFunctions {
 
         tvTitle.setText(book.getTitle());
         tvAuthor.setText(book.getAuthor().getName());
+
         tvDescription.setText(book.getDescription());
         tvDescription.setMovementMethod(new ScrollingMovementMethod());
 
+        if (book.getHistory().getLoanDate() != null) {
+            tvLoanDate.setText("Rented on: \n"
+                    + book.getHistory().getLoanDate().toString().substring(0, 10));
+
+            if (book.getHistory().getReturnDate() == null) {
+                int days = (int) ((book.getHistory().getLoanDate().getTime() - new java.sql.Date(new Date().getTime()).getTime()) / MILLISECONDS_IN_DAY);
+                days += LOAN_DAYS;
+                tvReturnDays.setText("Days left: \n"
+                        + String.valueOf(days));
+                if (days <= 5) tvReturnDays.setTextColor(Color.rgb(255, 0, 0));
+                else if (days <= 10) tvReturnDays.setTextColor(Color.rgb(255, 145, 0));
+                else tvReturnDays.setTextColor(Color.rgb(0, 128, 0));
+            } else {
+                tvReturnDays.setText("Returned");
+                tvReturnDays.setTextColor(Color.rgb(40, 60, 200));
+            }
+        }
         dialogBuilder.setPositiveButton("Approve", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -225,9 +248,9 @@ public class MiscFunctions {
             }
         });
 
-        AlertDialog b = dialogBuilder.create();
-        b.setCanceledOnTouchOutside(false);
-        b.show();
+        AlertDialog dialog = dialogBuilder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
 
         return 0;
     }
@@ -358,9 +381,13 @@ public class MiscFunctions {
             }
         });
 
-        AlertDialog b = dialogBuilder.create();
-        b.setCanceledOnTouchOutside(false);
-        b.show();
+        AlertDialog dialog = dialogBuilder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+
+        if ( book.getHistory().getLoanDate() == null && book.getAvailable() == 0 ) {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+        }
 
         return 0;
     }

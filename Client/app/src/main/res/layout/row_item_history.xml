@@ -39,12 +39,11 @@
             android:id="@+id/book_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Autor: Mihai Eminescu"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@android:color/darker_gray"
             android:padding="2sp"
+            android:text="Autor: Mihai Eminescu"
             android:textAlignment="textStart"
-            />
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/colorPrimaryDark" />
 
         <TextView
             android:id="@+id/book_rented_on"

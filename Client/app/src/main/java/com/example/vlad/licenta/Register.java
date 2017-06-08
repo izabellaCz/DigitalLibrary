@@ -27,7 +27,7 @@ public class Register extends AppCompatActivity {
     // email sa contina @
     // parola sa fie > 6 caractere
     // pass si repass sa corespunda
-    // checkbox sa fie bifat
+    // checkbox sa fie bifat ??
 
     public void registerMethod(View view) {
 
@@ -78,66 +78,36 @@ public class Register extends AppCompatActivity {
             return;
         }
 
-       /* String name = "name";
-        String email_r = "email";
-        String password_r = LogIn.md5("pass");*/
 
+        String url = ServerProperties.HOST;
+        url += "/user/register?fullname=";
+        url += name;
+        url += "&username=";
+        url += email_r;
+        url += "&password=";
+        url += LogIn.md5(password_r);
+        url += "&type=REGULAR";
+        ServerRequestGET<String> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(String.class),
+                new AsyncResponse<String>() {
+                    @Override
+                    public void actionCompleted(String res) {
 
-
-
-//        if (name.isEmpty())
-//            nameView.setError(getString(R.string.error_field_required));
-//            else if (email_r.isEmpty())
-//                email_registerView.setError(getString(R.string.error_field_required));
-//            else if (!email_r.contains("@"))
-//                email_registerView.setError(getString(R.string.error_invalid_email));
-//            else if (password_r.isEmpty())
-//                password_registerView.setError(getString(R.string.error_field_required));
-//            else if ( password_r.length()<6)
-//                password_registerView.setError(getString(R.string.password_short));
-//            else if (re_password.isEmpty())
-//                re_passwordView.setError(getString(R.string.error_field_required));
-//            else if (re_password.compareTo(password_r) != 0)
-//                re_passwordView.setError(getString(R.string.error_repassword));
-//            else if (termsView.isChecked() == false)
-//                termsView.setError(getString(R.string.error_check_box));
-
-//        else
-//        {
-            // VERIFICAM IN BAZA DE DATE DACA EXISTA EMAIL-UL INTRODUS
-            // DACA NU, VOM PUNE IN BAZA DE DATE CONTUL NOU. ---- Eventual mesaj SUCCES
-
-
-            String url = ServerProperties.HOST;
-            url += "/user/register?fullname=";
-            url += name;
-            url += "&username=";
-            url += email_r;
-            url += "&password=";
-            url += LogIn.md5(password_r);
-            url += "&type=REGULAR";
-            ServerRequestGET<String> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(String.class),
-                    new AsyncResponse<String>() {
-                        @Override
-                        public void actionCompleted(String res) {
-
-                            if(res.equals("1")) {
-                                MiscFunctions.createToast(getApplicationContext(), "Successfully registered!");
-                                Intent intent = new Intent(getApplicationContext(), LogIn.class);
-                                startActivity(intent);
-                            }
-                            else
-                            {
-                                MiscFunctions.createToast(getApplicationContext(), "Email already registered!");
-                            }
+                        if(res.equals("1")) {
+                            MiscFunctions.createToast(getApplicationContext(), "Successfully registered!");
+                            Intent intent = new Intent(getApplicationContext(), LogIn.class);
+                            startActivity(intent);
                         }
-                    });
+                        else
+                        {
+                            MiscFunctions.createToast(getApplicationContext(), "Email already registered!");
+                        }
+                    }
+                });
 
-            theServerRequest.execute();
-        }
+        theServerRequest.execute();
+    }
 
 }
-//    }
 
 
 
