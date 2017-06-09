@@ -27,6 +27,7 @@ public class CustomAdapterBooks extends ArrayAdapter<Book> {
         TextView txtAuthor;
         ImageView cover;
         TextView notAvailable;
+        TextView publisher;
     }
 
     public CustomAdapterBooks(List<Book> data, Context context) {
@@ -73,6 +74,7 @@ public class CustomAdapterBooks extends ArrayAdapter<Book> {
             viewHolder.txtAuthor = (TextView) convertView.findViewById(R.id.book_author);
             viewHolder.cover = (ImageView) convertView.findViewById(R.id.book_image);
             viewHolder.notAvailable = (TextView) convertView.findViewById(R.id.book_not_available);
+            viewHolder.publisher = (TextView) convertView.findViewById(R.id.book_publisher);
 
             convertView.setTag(viewHolder);
         } else {
@@ -80,6 +82,7 @@ public class CustomAdapterBooks extends ArrayAdapter<Book> {
         }
         viewHolder.txtName.setText(selectedBook.getTitle());
         viewHolder.txtAuthor.setText(selectedBook.getAuthor().getName());
+        viewHolder.publisher.setText(selectedBook.getPublisher());
 
         Bitmap bm;
         if (selectedBook.getCover() == null || selectedBook.getCover().length == 0) {

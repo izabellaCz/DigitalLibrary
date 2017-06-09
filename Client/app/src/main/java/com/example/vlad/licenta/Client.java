@@ -1,11 +1,13 @@
 package com.example.vlad.licenta;
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,9 +20,6 @@ import android.widget.TextView;
 import com.example.vlad.licenta.model.User;
 
 public class Client extends AppCompatActivity implements LoggedInActivity{
-
-
-
 
     private ClientTabs mSectionsPagerAdapter;
 
@@ -52,7 +51,6 @@ public class Client extends AppCompatActivity implements LoggedInActivity{
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-
 
     }
 

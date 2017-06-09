@@ -2,6 +2,7 @@ package com.example.vlad.licenta;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,11 +21,12 @@ import java.util.List;
 
 public class BooksList extends Fragment {
 
-    ListView lv;
+    private ListView lv;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private final String KEY_TITLE = "Title";
     private final String KEY_AUTHOR = "Author";
 
-    List<Book> listOfBooks;
+    private List<Book> listOfBooks;
 
     private static CustomAdapterBooks adapter;
     public static Fragment booksListFragment;
@@ -77,12 +79,36 @@ public class BooksList extends Fragment {
             }
         });
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeToRefresh);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+                String url = ServerProperties.HOST;
+                url += "/library/list?userId=";
+                url += ((LoggedInActivity) getActivity()).getCurrentUser().getId();
+
+                ServerRequestGET<List<Book>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Book.class),
+                        new AsyncResponse<List<Book>>() {
+                            @Override
+                            public void actionCompleted(List<Book> res) {
+                                if (res == null) res = new ArrayList<>();
+                                listOfBooks = res;
+                                adapter.refresh(listOfBooks);
+                            }
+                        });
+
+                theServerRequest.execute();
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
         return rootView;
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        if (v.getId()==R.id.list) {
+        if (v.getId()==R.id.listBooks) {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
             menu.setHeaderTitle("Pick Action");
             String[] menuItems = new String[]{"Add To Favorites",""};
