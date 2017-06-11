@@ -29,6 +29,8 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Administrator extends AppCompatActivity implements View.OnClickListener, LoggedInActivity{
 
@@ -46,6 +48,9 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
     private Boolean isFabOpen = false;
     private FloatingActionButton fab_settings, fab_add_book, fab_scan;
     private Animation fab_open_scan, fab_close_scan, fab_open_add_book, fab_close_add_book;
+
+    private boolean logout;
+    private Timer logoutTimer;
 
 
     @Override
@@ -79,6 +84,8 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
         fab_scan.setOnClickListener(this);
 
         currentUser = (User) getIntent().getSerializableExtra("currentUser");
+        logout = false;
+        logoutTimer = new Timer();
 
     }
 
@@ -279,5 +286,26 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
 
     public User getCurrentUser() {
         return currentUser;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if ( !logout ) {
+            MiscFunctions.createToast(getApplicationContext(), "Press again to logout");
+            logout = true;
+            logoutTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    logout = false;
+                }
+            }, 5000); // 10 seconds
+        }
+        else
+        {
+            // logout
+            Intent intent = new Intent(getApplicationContext(), LogIn.class);
+            intent.putExtra("logout", true);
+            startActivity(intent);
+        }
     }
 }
