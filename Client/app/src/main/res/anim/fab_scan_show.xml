@@ -14,13 +14,13 @@
         <!--android:toDegrees="0" />-->
 
     <!--Move-->
-    <translate
-        android:duration="1000"
-        android:fromXDelta="0%"
-        android:fromYDelta="-26%"
-        android:interpolator="@android:anim/linear_interpolator"
-        android:toXDelta="-50%"
-        android:toYDelta="-150%" />
+    <!--<translate-->
+        <!--android:duration="1000"-->
+        <!--android:fromXDelta="0%"-->
+        <!--android:fromYDelta="-26%"-->
+        <!--android:interpolator="@android:anim/linear_interpolator"-->
+        <!--android:toXDelta="-50%"-->
+        <!--android:toYDelta="-150%" />-->
 
     <!--Fade In-->
     <alpha

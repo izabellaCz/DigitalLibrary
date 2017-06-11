@@ -35,7 +35,7 @@
             android:name=".qrGeneratePage"
             android:label="@string/title_activity_qr_generate_page"
             android:theme="@style/AppTheme" />
-        <activity android:name=".AdminBooksList" >
+        <activity android:name=".AdministratorAddBook" >
         </activity>
     </application>
 
