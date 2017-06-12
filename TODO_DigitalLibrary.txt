@@ -1,6 +1,6 @@
 deffects:
 DONE- display publisher
-- block auto rotate
+DONE - block auto rotate
 
 CLIENT:
 DONE-after return, history list item does not get refreshed 
@@ -10,8 +10,8 @@ DONE-book availability -> under (book list && favorite list) set a text view dis
 
 ADMIN:
 -return book from client dialog
--fancy buttons - fucked up.. again...
--add book not tested
+DONE-fancy buttons - fucked up.. again...
+-add book not tested --> add author: server request to INSERT author needs to be implemented
 -rent book ?!
 -history ?! - enventual un history de approves and denies
 -on return book - weird toast message content

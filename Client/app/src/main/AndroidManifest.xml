@@ -15,27 +15,34 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:screenOrientation="portrait"
         android:theme="@style/AppTheme" >
         <activity
             android:name=".LogIn"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Register" />
+        <activity android:name=".Register"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".Client"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".Administrator" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait" />
+        <activity android:name=".Administrator"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".qrGeneratePage"
             android:label="@string/title_activity_qr_generate_page"
-            android:theme="@style/AppTheme" />
-        <activity android:name=".AdminBooksList" >
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait" />
+        <activity android:name=".AdministratorAddBook"
+            android:screenOrientation="portrait" >
         </activity>
     </application>
 

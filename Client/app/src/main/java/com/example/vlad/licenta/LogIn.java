@@ -28,10 +28,13 @@ public class LogIn extends AppCompatActivity {
         emailView = (AutoCompleteTextView) findViewById(R.id.email_id);
         passwordView = (EditText) findViewById(R.id.password_id);
 
-        /*emailView.setText("a");
-        passwordView.setText("a");
-
-        idUser = -1;*/
+        boolean value;
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            value = bundle.getBoolean("logout");
+            if ( value )
+                MiscFunctions.createToast(getApplicationContext(), "Logout successful!");
+        }
     }
 
     public static final String md5(final String s) {
@@ -60,8 +63,8 @@ public class LogIn extends AppCompatActivity {
     }
 
     public void logInMethod(View view){
-        emailView.setText("iza@iza.com");
-        passwordView.setText("password");
+        emailView.setText("admin@admin.com");
+        passwordView.setText("admin1");
 
         String email = emailView.getText().toString();
         String password = passwordView.getText().toString();

@@ -1,5 +1,6 @@
 package com.example.vlad.licenta;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -19,6 +20,9 @@ import android.widget.TextView;
 
 import com.example.vlad.licenta.model.User;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class Client extends AppCompatActivity implements LoggedInActivity{
 
     private ClientTabs mSectionsPagerAdapter;
@@ -31,6 +35,10 @@ public class Client extends AppCompatActivity implements LoggedInActivity{
     public ImageView image;
 
     private User currentUser;
+
+    private boolean logout;
+    private Timer logoutTimer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +59,9 @@ public class Client extends AppCompatActivity implements LoggedInActivity{
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+        logout = false;
+        logoutTimer = new Timer();
 
     }
 
@@ -153,5 +164,24 @@ public class Client extends AppCompatActivity implements LoggedInActivity{
         return currentUser;
     }
 
-
+    @Override
+    public void onBackPressed() {
+        if ( !logout ) {
+            MiscFunctions.createToast(getApplicationContext(), "Press again to logout");
+            logout = true;
+            logoutTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    logout = false;
+                }
+            }, 5000); // 10 seconds
+        }
+        else
+        {
+            // logout
+            Intent intent = new Intent(getApplicationContext(), LogIn.class);
+            intent.putExtra("logout", true);
+            startActivity(intent);
+        }
+    }
 }
