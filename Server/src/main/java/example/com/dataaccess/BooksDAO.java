@@ -123,7 +123,8 @@ public class BooksDAO {
 
     public int rentBook(String userId, String bookId, String loanDate) throws SQLException {
         return DAOTemplate.executeUpdate("insert into history (history_user_id, history_book_id, loan_date) " +
-                "values (" + userId + ", " + bookId + ", '" + loanDate + "'); " +
+                "values (" + userId + ", " + bookId + ", '" + loanDate + "') " +
+                "ON DUPLICATE KEY UPDATE loan_date='" + loanDate + "', return_date=null; " +
                 "update books set available = available - 1 where book_id = " + bookId + ";");
 
     }

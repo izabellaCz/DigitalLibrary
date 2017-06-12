@@ -1,9 +1,17 @@
+
+/*
+sau daca e creata deja structura:
+
+ALTER TABLE `android`.`history` 
+ADD UNIQUE `user_book_UNIQUE` (`history_user_id`,`history_book_id`) ;
+*/
+
 CREATE TABLE `authors` (
   `author_id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`author_id`),
   UNIQUE KEY `name_UNIQUE` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `books` (
@@ -19,7 +27,7 @@ CREATE TABLE `books` (
   UNIQUE KEY `title_publisher_UNIQUE` (`title`,`book_author_id`,`publisher`),
   KEY `Books_fk0` (`book_author_id`),
   CONSTRAINT `Books_fk0` FOREIGN KEY (`book_author_id`) REFERENCES `authors` (`author_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COLLATE=utf8_romanian_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_romanian_ci;
 
 
 CREATE TABLE `favourites` (
@@ -31,7 +39,7 @@ CREATE TABLE `favourites` (
   KEY `Favourites_fk1` (`fav_book_id`),
   CONSTRAINT `Favourites_fk0` FOREIGN KEY (`fav_user_id`) REFERENCES `users` (`user_id`),
   CONSTRAINT `Favourites_fk1` FOREIGN KEY (`fav_book_id`) REFERENCES `books` (`book_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `history` (
@@ -42,11 +50,12 @@ CREATE TABLE `history` (
   `return_date` datetime DEFAULT NULL,
   `status` int(11) DEFAULT NULL,
   PRIMARY KEY (`history_id`),
+  UNIQUE KEY `user_book_UNIQUE` (`history_user_id`,`history_book_id`),
   KEY `History_fk0` (`history_user_id`),
   KEY `History_fk1` (`history_book_id`),
   CONSTRAINT `History_fk0` FOREIGN KEY (`history_user_id`) REFERENCES `users` (`user_id`),
   CONSTRAINT `History_fk1` FOREIGN KEY (`history_book_id`) REFERENCES `books` (`book_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE `users` (
@@ -57,4 +66,4 @@ CREATE TABLE `users` (
   `type` varchar(50) NOT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
