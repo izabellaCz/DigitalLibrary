@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.example.vlad.licenta.model.Book;
 import com.example.vlad.licenta.model.QRTransaction;
+import com.example.vlad.licenta.model.User;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
@@ -276,47 +277,54 @@ public class MiscFunctions {
 
         final ImageButton addRemoveFavs = (ImageButton) dialogView.findViewById(R.id.ib_AddRemoveFav);
 
-        if (book.isFavourite())
-            addRemoveFavs.setImageBitmap(BitmapFactory.decodeResource(activ.getResources(), R.drawable.fav_minus_small));
+        if (((LoggedInActivity)activ).getCurrentUser().getType().compareTo("ADMINISTRATOR") == 0 )
+        {
+            addRemoveFavs.setVisibility(View.INVISIBLE);
+        }
+        else
+        {
+            if (book.isFavourite())
+                addRemoveFavs.setImageBitmap(BitmapFactory.decodeResource(activ.getResources(), R.drawable.fav_minus_small));
 
-        addRemoveFavs.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // server request...
+            addRemoveFavs.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // server request...
 
-                // onServerRequestiCompletion change image
+                    // onServerRequestiCompletion change image
 
-                String url = ServerProperties.HOST;
-                url += "/library";
-                url += !book.isFavourite() ? "/addFavourite" : "/removeFavourite";
+                    String url = ServerProperties.HOST;
+                    url += "/library";
+                    url += !book.isFavourite() ? "/addFavourite" : "/removeFavourite";
 
-                url += "?userId=" + ((LoggedInActivity)activ).getCurrentUser().getId();
-                url += "&bookId=" + book.getId();
+                    url += "?userId=" + ((LoggedInActivity)activ).getCurrentUser().getId();
+                    url += "&bookId=" + book.getId();
 
-                ServerRequestGET<String> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(String.class),
-                        new AsyncResponse<String>() {
-                            @Override
-                            public void actionCompleted(String obj) {
-                                if (obj != null && obj.compareTo("1") == 0) {
-                                    if ( book.isFavourite() ) {
-                                        book.setFavourite(false);
-                                        addRemoveFavs.setImageBitmap(BitmapFactory.decodeResource(activ.getResources(), R.drawable.fav_plus_small));
-                                    } else {
-                                        book.setFavourite(true);
-                                        addRemoveFavs.setImageBitmap(BitmapFactory.decodeResource(activ.getResources(), R.drawable.fav_minus_small));
+                    ServerRequestGET<String> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(String.class),
+                            new AsyncResponse<String>() {
+                                @Override
+                                public void actionCompleted(String obj) {
+                                    if (obj != null && obj.compareTo("1") == 0) {
+                                        if ( book.isFavourite() ) {
+                                            book.setFavourite(false);
+                                            addRemoveFavs.setImageBitmap(BitmapFactory.decodeResource(activ.getResources(), R.drawable.fav_plus_small));
+                                        } else {
+                                            book.setFavourite(true);
+                                            addRemoveFavs.setImageBitmap(BitmapFactory.decodeResource(activ.getResources(), R.drawable.fav_minus_small));
+                                        }
+                                        MiscFunctions.createToast(activ.getApplicationContext(), "Success");
                                     }
-                                    MiscFunctions.createToast(activ.getApplicationContext(), "Success");
+                                    else
+                                        MiscFunctions.createToast(activ.getApplicationContext(), "Failed");
+
                                 }
-                                else
-                                    MiscFunctions.createToast(activ.getApplicationContext(), "Failed");
+                            });
 
-                            }
-                        });
+                    theServerRequest.execute();
 
-                theServerRequest.execute();
-
-            }
-        });
+                }
+            });
+        }
 
         final Bitmap bm;
         if (book.getCover() == null) {
@@ -351,27 +359,30 @@ public class MiscFunctions {
             }
         }
 
-        if (book.getHistory().getLoanDate() != null && book.getHistory().getReturnDate() == null) {
+        if (((LoggedInActivity)activ).getCurrentUser().getType().compareTo("ADMINISTRATOR") == 1 )
+        {
+            if (book.getHistory().getLoanDate() != null && book.getHistory().getReturnDate() == null) {
             /* to be returned */
-            dialogBuilder.setPositiveButton("Return Book", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent (activ, qrGeneratePage.class);
-                    intent.putExtra("bitmap", qrGenerate(QRTransaction.RETURN, ((LoggedInActivity) activ).getCurrentUser().getId(), book));
-                    activ.startActivity(intent);
-                }
-            });
-        } else {
+                dialogBuilder.setPositiveButton("Return Book", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent (activ, qrGeneratePage.class);
+                        intent.putExtra("bitmap", qrGenerate(QRTransaction.RETURN, ((LoggedInActivity) activ).getCurrentUser().getId(), book));
+                        activ.startActivity(intent);
+                    }
+                });
+            } else {
 
             /* to be rented */
-            dialogBuilder.setPositiveButton("Rent Book", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent (activ, qrGeneratePage.class);
-                    intent.putExtra("bitmap", qrGenerate(QRTransaction.RENT, ((LoggedInActivity) activ).getCurrentUser().getId(), book));
-                    activ.startActivity(intent);
-                }
-            });
+                dialogBuilder.setPositiveButton("Rent Book", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent (activ, qrGeneratePage.class);
+                        intent.putExtra("bitmap", qrGenerate(QRTransaction.RENT, ((LoggedInActivity) activ).getCurrentUser().getId(), book));
+                        activ.startActivity(intent);
+                    }
+                });
+            }
         }
 
 
