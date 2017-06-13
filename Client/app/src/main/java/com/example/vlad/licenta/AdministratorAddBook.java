@@ -139,11 +139,31 @@ public class AdministratorAddBook extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int whichButton) {
                 addAuthorDialogResult = tvAddAuthor.getText().toString();
                 if (addAuthorDialogResult.compareTo("") != 0) {
-                    ArrayAdapter<String> adapt = (ArrayAdapter<String>) spinner_author.getAdapter();
 
-                    adapt.add(addAuthorDialogResult);
-                    //spinner_author.setAdapter(adapt);
-                    addAuthorDialogResult = "";
+                    String url = ServerProperties.HOST;
+                    url += "/authors/add?name=";
+                    url += addAuthorDialogResult;
+
+                    ServerRequestGET<String> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(String.class),
+                            new AsyncResponse<String>() {
+                                @Override
+                                public void actionCompleted(String res) {
+
+                                    if(res != null && res.equals("1")) {
+                                        ArrayAdapter<String> adapt = (ArrayAdapter<String>) spinner_author.getAdapter();
+                                        adapt.add(addAuthorDialogResult);
+                                        addAuthorDialogResult = "";
+                                    }
+                                    else
+                                    {
+                                        MiscFunctions.createToast(getApplicationContext(), "Error adding author!");
+                                    }
+                                }
+                            });
+
+                    theServerRequest.execute();
+
+
                 }
             }
         });
@@ -226,7 +246,7 @@ public class AdministratorAddBook extends AppCompatActivity {
                 new AsyncResponse<String>() {
                     @Override
                     public void actionCompleted(String obj) {
-                        if ( obj.compareTo("1") == 0 )
+                        if ( obj != null && obj.compareTo("1") == 0 )
                             MiscFunctions.createToast(getApplicationContext(), "Book add: Success");
                         else
                             MiscFunctions.createToast(getApplicationContext(), "Book add: Fail");

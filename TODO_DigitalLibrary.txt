@@ -5,14 +5,14 @@ DONE - block auto rotate
 CLIENT:
 DONE-after return, history list item does not get refreshed 
 DONE-book availability -> under (book list && favorite list) set a text view displaying that is not available (if availability == 0 )
--history - wrong book details after failed "return book"
+-history - wrong book details after failed "return book" (?)
 
 
 ADMIN:
--return book from client dialog
+-return book from client dialog (?)
 DONE-fancy buttons - fucked up.. again...
--add book not tested --> add author: server request to INSERT author needs to be implemented
--rent book ?!
+-add book not tested --> add author: server request to INSERT author needs to be implemented (!!)
+DONE-rent book ?! (removed for admin side)
 -history ?! - enventual un history de approves and denies
 -on return book - weird toast message content
 -show more details for books
