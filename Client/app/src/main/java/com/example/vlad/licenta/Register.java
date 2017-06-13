@@ -43,6 +43,12 @@ public class Register extends AppCompatActivity {
         String re_password = re_passwordView.getText().toString();
 
         boolean allValid = true;
+
+        if ( name.isEmpty() ){
+            nameView.setError(getString(R.string.error_field_required));
+            allValid = false;
+        }
+
         if (email_r.isEmpty()) {
             email_registerView.setError(getString(R.string.error_field_required));
             allValid = false;
@@ -92,7 +98,7 @@ public class Register extends AppCompatActivity {
                     @Override
                     public void actionCompleted(String res) {
 
-                        if(res.equals("1")) {
+                        if(res != null && res.equals("1")) {
                             MiscFunctions.createToast(getApplicationContext(), "Successfully registered!");
                             Intent intent = new Intent(getApplicationContext(), LogIn.class);
                             startActivity(intent);
