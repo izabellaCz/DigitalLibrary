@@ -36,7 +36,7 @@ public class AuthorsService {
             if (e.getErrorCode() == MysqlErrorNumbers.ER_DATA_TOO_LONG) return "Author name too long";
             if (e.getErrorCode() == MysqlErrorNumbers.ER_PARSE_ERROR) return "Invalid characters in author's name";
         }
-        return null;
+        return "-1";
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -47,7 +47,7 @@ public class AuthorsService {
         } catch (Exception e) {
             LOGGER.error(e);
         }
-        return null;
+        return "-1";
 
     }
 

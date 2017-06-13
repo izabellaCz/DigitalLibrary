@@ -34,7 +34,7 @@ public class BooksService {
         } catch (Exception e) {
             LOGGER.error("ERROR", e);
         }
-        return null;
+        return "-1";
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -194,7 +194,7 @@ public class BooksService {
         } catch (Exception e) {
             LOGGER.error("ERROR", e);
         }
-        return null;
+        return "-1";
     }
 
 }

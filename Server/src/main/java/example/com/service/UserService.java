@@ -32,7 +32,7 @@ public class UserService {
         } catch (Exception e) {
             LOGGER.error(e);
         }
-        return null;
+        return "-1";
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET, params = {"username","password","type"}, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -46,7 +46,7 @@ public class UserService {
             if (e.getErrorCode() == MysqlErrorNumbers.ER_DATA_TOO_LONG) return "Data truncation";
             if (e.getErrorCode() == MysqlErrorNumbers.ER_PARSE_ERROR) return "Invalid input";
         }
-        return null;
+        return "-1";
     }
 
 
