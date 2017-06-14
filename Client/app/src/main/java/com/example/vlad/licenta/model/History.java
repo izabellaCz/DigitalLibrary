@@ -6,15 +6,19 @@ public class History {
 
     private int id;
     private String userId;
+    private int loanApprId;
+    private int returnApprId;
     private Date loanDate;
     private Date returnDate;
 
     public History() {
     }
 
-    public History(int id, String userId, Date loanDate, Date returnDate) {
+    public History(int id, String userId, int loanApprId, int returnApprId, Date loanDate, Date returnDate) {
         this.id = id;
         this.userId = userId;
+        this.loanApprId = loanApprId;
+        this.returnApprId = returnApprId;
         this.loanDate = loanDate;
         this.returnDate = returnDate;
     }
@@ -49,5 +53,21 @@ public class History {
 
     public void setReturnDate(Date returnDate) {
         this.returnDate = returnDate;
+    }
+
+    public int getLoanApprId() {
+        return loanApprId;
+    }
+
+    public void setLoanApprId(int loanApprId) {
+        this.loanApprId = loanApprId;
+    }
+
+    public int getReturnApprId() {
+        return returnApprId;
+    }
+
+    public void setReturnApprId(int returnApprId) {
+        this.returnApprId = returnApprId;
     }
 }

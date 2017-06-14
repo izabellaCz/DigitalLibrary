@@ -84,9 +84,10 @@ public class BooksService {
     @RequestMapping(value = "/rentBook", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String rentBook(@RequestParam("userId") String userId, @RequestParam("bookId") String bookId,
-                           @RequestParam("loanDate") String loanDate) {
+                           @RequestParam("loanDate") String loanDate,
+                           @RequestParam("approverId") String approverId) {
         try {
-            return String.valueOf(booksDAO.rentBook(userId, bookId, loanDate));
+            return String.valueOf(booksDAO.rentBook(userId, bookId, loanDate, approverId));
         } catch (SQLException e) {
             LOGGER.error("SQL EXCEPTION: ", e);
             if (e.getErrorCode() == MysqlErrorNumbers.ER_DATA_TOO_LONG) return "Data truncation";
@@ -99,15 +100,27 @@ public class BooksService {
     @RequestMapping(value = "/returnBook", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String returnBook(@RequestParam("historyId") String historyId,
-                           @RequestParam("returnDate") String returnDate) {
+                           @RequestParam("returnDate") String returnDate,
+                             @RequestParam("approverId") String approverId) {
         try {
-            return String.valueOf(booksDAO.returnBook(historyId, returnDate));
+            return String.valueOf(booksDAO.returnBook(historyId, returnDate, approverId));
         } catch (SQLException e) {
             LOGGER.error("ERROR", e);
             if (e.getErrorCode() == MysqlErrorNumbers.ER_DATA_TOO_LONG) return "Data truncation";
             if (e.getErrorCode() == MysqlErrorNumbers.ER_PARSE_ERROR) return "Invalid input";
         }
         return "-1";
+    }
+
+    @RequestMapping(value = "/getLoanInfo", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String getLoanInfo(@RequestParam String userId, @RequestParam String bookId) {
+        try {
+            return objectMapper.writeValueAsString(booksDAO.getLoanInfo(userId, bookId));
+        } catch (Exception e) {
+            LOGGER.error("ERROR", e);
+        }
+        return null;
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -191,6 +204,17 @@ public class BooksService {
     public String findBooks(@RequestParam String userId, @RequestParam String query) {
         try {
             return objectMapper.writeValueAsString(booksDAO.findBooks(userId, query));
+        } catch (Exception e) {
+            LOGGER.error("ERROR", e);
+        }
+        return "-1";
+    }
+
+    @RequestMapping(value = "/getAdminHistory", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String getAdminHistory(@RequestParam String adminId) {
+        try {
+            return objectMapper.writeValueAsString(booksDAO.getAdminsApproves(adminId));
         } catch (Exception e) {
             LOGGER.error("ERROR", e);
         }

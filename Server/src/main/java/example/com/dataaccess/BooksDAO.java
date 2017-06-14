@@ -121,17 +121,17 @@ public class BooksDAO {
 
     }
 
-    public int rentBook(String userId, String bookId, String loanDate) throws SQLException {
-        return DAOTemplate.executeUpdate("insert into history (history_user_id, history_book_id, loan_date) " +
-                "values (" + userId + ", " + bookId + ", '" + loanDate + "') " +
-                "ON DUPLICATE KEY UPDATE loan_date='" + loanDate + "', return_date=null; " +
+    public int rentBook(String userId, String bookId, String loanDate, String approverId) throws SQLException {
+        return DAOTemplate.executeUpdate("insert into history (history_user_id, history_book_id, loan_date, loan_appr_id) " +
+                "values (" + userId + ", " + bookId + ", '" + loanDate + "', " + approverId + ") " +
+                "ON DUPLICATE KEY UPDATE loan_date='" + loanDate + "', return_date = null, return_appr_id = null; " +
                 "update books set available = available - 1 where book_id = " + bookId + ";");
 
     }
 
-    public int returnBook(String historyId, String returnDate) throws SQLException {
+    public int returnBook(String historyId, String returnDate, String approverId) throws SQLException {
         return DAOTemplate.executeUpdate("update history set return_date = '" +
-                returnDate + "' where history_id = " + historyId + "; " +
+                returnDate + "', return_appr_id = " + approverId + " where history_id = " + historyId + "; " +
                 "update books as b " +
                 "join history as h on h.history_book_id = b.book_id " +
                 "set b.available = b.available + 1 " +
@@ -287,6 +287,52 @@ public class BooksDAO {
             return books;
         }
 
+    }
+
+    public Book getLoanInfo(String userId, String bookId) throws SQLException, UnsupportedEncodingException {
+        try (Connection connection = DAOTemplate.getDataSource().getConnection()) {
+            String query = "SELECT * , ( " +
+                    "CASE WHEN EXISTS ( " +
+                    "SELECT 1 from favourites " +
+                    "WHERE fav_user_id = " + userId +" and fav_book_id = b.book_id )" +
+                    "THEN TRUE ELSE FALSE " +
+                    "END ) as  `is_favourite`" +
+                    "FROM books AS b " +
+                    "JOIN authors AS a ON a.author_id = b.book_author_id " +
+                    "JOIN history AS h on h.history_book_id = b.book_id " +
+                    "WHERE history_book_id = " + bookId + " and history_user_id = " + userId + "; ";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+            LOGGER.debug("Executing query: " + query);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            resultSet.next();
+            return Book.constructFromResultSet(resultSet);
+        }
+    }
+
+    public List<Book> getAdminsApproves(String adminId) throws SQLException, UnsupportedEncodingException {
+        try (Connection connection = DAOTemplate.getDataSource().getConnection()) {
+            String query = "SELECT *, " +
+                    "FALSE AS  `is_favourite` FROM books AS b " +
+                    "JOIN authors AS a ON a.author_id = b.book_author_id " +
+                    "JOIN ( SELECT * FROM history WHERE loan_appr_id = " + adminId +
+                    " or return_appr_id = " + adminId + " ) AS h on h.history_book_id = b.book_id ";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+            LOGGER.debug("Executing query: " + query);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            List<Book> books = new ArrayList<>();
+            while (resultSet.next()) {
+                books.add(Book.constructFromResultSet(resultSet));
+            }
+            return books;
+        }
     }
 
     public DAOTemplate getDAOTemplate() {
