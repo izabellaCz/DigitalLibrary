@@ -4,6 +4,24 @@ sau daca e creata deja structura:
 
 ALTER TABLE `android`.`history` 
 ADD UNIQUE `user_book_UNIQUE` (`history_user_id`,`history_book_id`) ;
+
+ALTER TABLE `android`.`history` 
+ADD COLUMN `loan_appr_id` INT(11) NOT NULL AFTER `status`;
+
+ALTER TABLE `android`.`history` 
+ADD COLUMN `return_appr_id` INT(11) AFTER `loan_appr_id`;
+
+
+ALTER TABLE `android`.`history` 
+ADD CONSTRAINT `fk_admin_id` FOREIGN KEY (`loan_appr_id`) 
+REFERENCES `android`.`users` (user_id);
+
+
+ALTER TABLE `android`.`history` 
+ADD CONSTRAINT `fk_admin_ret_id` FOREIGN KEY (`return_appr_id`) 
+REFERENCES `android`.`users` (user_id);
+
+
 */
 
 CREATE TABLE `authors` (
@@ -49,12 +67,17 @@ CREATE TABLE `history` (
   `loan_date` datetime NOT NULL,
   `return_date` datetime DEFAULT NULL,
   `status` int(11) DEFAULT NULL,
+  `loan_appr_id` int(11) NOT NULL,
+  `return_appr_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`history_id`),
   UNIQUE KEY `user_book_UNIQUE` (`history_user_id`,`history_book_id`),
-  KEY `History_fk0` (`history_user_id`),
   KEY `History_fk1` (`history_book_id`),
+  KEY `fk_admin_id` (`loan_appr_id`),
+  KEY `fk_admin_ret_id` (`return_appr_id`),
   CONSTRAINT `History_fk0` FOREIGN KEY (`history_user_id`) REFERENCES `users` (`user_id`),
-  CONSTRAINT `History_fk1` FOREIGN KEY (`history_book_id`) REFERENCES `books` (`book_id`)
+  CONSTRAINT `History_fk1` FOREIGN KEY (`history_book_id`) REFERENCES `books` (`book_id`),
+  CONSTRAINT `fk_admin_id` FOREIGN KEY (`loan_appr_id`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `fk_admin_ret_id` FOREIGN KEY (`return_appr_id`) REFERENCES `users` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
