@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.vlad.licenta.AdministratorAddBook"
-    android:background="@mipmap/clear_background">
+    android:background="@mipmap/add_book">
 
     <LinearLayout
         android:id="@+id/email_login_form"
@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_alignParentLeft="true"
-        android:layout_centerInParent="true"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true">
 
         <AutoCompleteTextView
@@ -130,21 +130,21 @@
                 />
         </LinearLayout>
 
-    </LinearLayout>
+        <Button
+            android:id="@+id/button_admin_add_book"
+            style="?android:textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Add Book"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:onClick="addBook"
+            android:background="#40FFFFFF"
+            android:textColorLink="@color/colorAccent"
+            android:layout_alignParentBottom="true"
+            tools:style="@style/Widget.AppCompat.Button.Borderless.Colored" />
 
-    <Button
-        android:id="@+id/button_admin_add_book"
-        style="?android:textAppearanceSmall"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Add Book"
-        android:textColor="#FFFFFF"
-        android:textStyle="bold"
-        android:onClick="addBook"
-        android:background="#40FFFFFF"
-        android:textColorLink="@color/colorAccent"
-        android:layout_alignParentBottom="true"
-        tools:style="@style/Widget.AppCompat.Button.Borderless.Colored" />
+    </LinearLayout>
 
 </RelativeLayout>

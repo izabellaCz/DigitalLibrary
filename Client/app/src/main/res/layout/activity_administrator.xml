@@ -58,9 +58,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginRight="80dp"
-        android:layout_marginBottom="17dp"
-        android:visibility="invisible"
+        android:layout_marginRight="70dp"
+        android:layout_marginBottom="8dp"
         app:elevation="6dp"
         app:backgroundTint="@color/colorFAB1"
         app:pressedTranslationZ="12dp"
@@ -71,13 +70,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginRight="50dp"
-        android:layout_marginBottom="80dp"
-        android:visibility="invisible"
+        android:layout_marginRight="65dp"
+        android:layout_marginBottom="60dp"
         app:backgroundTint="@color/colorFAB2"
         app:elevation="6dp"
         app:pressedTranslationZ="12dp"
         android:src="@android:drawable/ic_menu_camera" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="70dp"
+        app:backgroundTint="@color/colorFAB3"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp"
+        android:src="@android:drawable/ic_menu_search" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/container"

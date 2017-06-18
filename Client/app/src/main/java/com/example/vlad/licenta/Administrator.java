@@ -40,7 +40,7 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
     private User currentUser;
 
     private Boolean isFabOpen = false;
-    private FloatingActionButton fab_settings, fab_add_book, fab_scan;
+    private FloatingActionButton fab_settings, fab_add_book, fab_scan, fab_filter;
     private Animation fab_show, fab_hide;
 
     private boolean logout;
@@ -66,11 +66,15 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
         fab_settings = (FloatingActionButton)findViewById(R.id.fab_settings);
         fab_add_book = (FloatingActionButton)findViewById(R.id.fab_add_book);
         fab_scan = (FloatingActionButton)findViewById(R.id.fab_scan);
+        fab_filter = (FloatingActionButton) findViewById(R.id.fab_filter);
+
         fab_show = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_show);
         fab_hide = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_hide);
+
         fab_settings.setOnClickListener(this);
         fab_add_book.setOnClickListener(this);
         fab_scan.setOnClickListener(this);
+        fab_filter.setOnClickListener(this);
 
         logout = false;
         logoutTimer = new Timer();
@@ -150,9 +154,16 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
 
                 startScan();
                 break;
-            case R.id.fab_add_book:
+            case R.id.fab_add_book: {
+                Intent intent = new Intent(getApplicationContext(), AdministratorAddBook.class);
+                startActivity(intent);
+            }
+                break;
 
-                addBookToDB();
+            case R.id.fab_filter: {
+                Intent intent = new Intent(getApplicationContext(), FilterBooksActivity.class);
+                startActivity(intent);
+            }
                 break;
 
             default:
@@ -164,16 +175,20 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
         if(isFabOpen){
             fab_add_book.startAnimation(fab_hide);
             fab_scan.startAnimation(fab_hide);
+            fab_filter.startAnimation(fab_hide);
             fab_add_book.setClickable(false);
             fab_scan.setClickable(false);
+            fab_filter.setClickable(false);
             isFabOpen = false;
             Log.d("Raj", "close");
 
         } else {
             fab_add_book.startAnimation(fab_show);
             fab_scan.startAnimation(fab_show);
+            fab_filter.startAnimation(fab_show);
             fab_add_book.setClickable(true);
             fab_scan.setClickable(true);
+            fab_filter.setClickable(true);
             isFabOpen = true;
             Log.d("Raj","open");
 
@@ -189,12 +204,6 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
         integrator.setBarcodeImageEnabled(false);
         integrator.initiateScan();
     }
-
-    private void addBookToDB() {
-        Intent intent = new Intent(getApplicationContext(), AdministratorAddBook.class);
-        startActivity(intent);
-    }
-
 
 
     /**
