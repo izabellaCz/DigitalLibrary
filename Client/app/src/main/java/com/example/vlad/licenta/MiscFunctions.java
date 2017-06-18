@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import com.example.vlad.licenta.model.Book;
 import com.example.vlad.licenta.model.QRTransaction;
-import com.example.vlad.licenta.model.User;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
@@ -85,6 +84,7 @@ public class MiscFunctions {
 
         TextView tvTitle = (TextView) dialogView.findViewById(R.id.tv_title);
         TextView tvAuthor = (TextView) dialogView.findViewById(R.id.tv_author);
+        TextView tvPublisher = (TextView) dialogView.findViewById(R.id.tv_publisher);
         final TextView tvDescription = (TextView) dialogView.findViewById(R.id.book_description_dialog);
         final ImageView imageBook = (ImageView) dialogView.findViewById(R.id.book_image_dialog);
 
@@ -104,6 +104,7 @@ public class MiscFunctions {
 
         tvTitle.setText(book.getTitle());
         tvAuthor.setText(book.getAuthor().getName());
+        tvPublisher.setText(book.getPublisher());
 
         tvDescription.setText(book.getDescription());
         tvDescription.setMovementMethod(new ScrollingMovementMethod());
@@ -183,6 +184,7 @@ public class MiscFunctions {
 
         TextView tvTitle = (TextView) dialogView.findViewById(R.id.tv_title);
         TextView tvAuthor = (TextView) dialogView.findViewById(R.id.tv_author);
+        TextView tvPublisher = (TextView) dialogView.findViewById(R.id.tv_publisher);
         final TextView tvDescription = (TextView) dialogView.findViewById(R.id.book_description_dialog);
         final ImageView imageBook = (ImageView) dialogView.findViewById(R.id.book_image_dialog);
 
@@ -205,6 +207,7 @@ public class MiscFunctions {
 
         tvTitle.setText(book.getTitle());
         tvAuthor.setText(book.getAuthor().getName());
+        tvPublisher.setText(book.getPublisher());
 
         tvDescription.setText(book.getDescription());
         tvDescription.setMovementMethod(new ScrollingMovementMethod());
@@ -277,6 +280,7 @@ public class MiscFunctions {
 
         TextView tvTitle = (TextView) dialogView.findViewById(R.id.tv_title);
         TextView tvAuthor = (TextView) dialogView.findViewById(R.id.tv_author);
+        TextView tvPublisher = (TextView) dialogView.findViewById(R.id.tv_publisher);
         final TextView tvDescription = (TextView) dialogView.findViewById(R.id.book_description_dialog);
         final ImageView imageBook = (ImageView) dialogView.findViewById(R.id.book_image_dialog);
         TextView tvLoanDate = (TextView) dialogView.findViewById(R.id.loan_date_dialog);
@@ -363,6 +367,7 @@ public class MiscFunctions {
 
         tvTitle.setText(book.getTitle());
         tvAuthor.setText(book.getAuthor().getName());
+        tvPublisher.setText(book.getPublisher());
 
         tvDescription.setText(book.getDescription());
         tvDescription.setMovementMethod(new ScrollingMovementMethod());

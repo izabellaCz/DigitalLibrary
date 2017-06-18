@@ -42,6 +42,15 @@
         android:text="Autor"
         android:textSize="17sp"/>
 
+    <TextView
+        android:id="@+id/tv_publisher"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_author"
+        android:layout_marginTop="15dp"
+        android:text="Publisher"
+        android:textSize="17sp"/>
+
 
 
         <ImageView
@@ -49,7 +58,7 @@
             android:layout_width="75dp"
             android:layout_height="100dp"
             android:src="@drawable/default_book_image"
-            android:layout_below="@+id/tv_author"
+            android:layout_below="@+id/tv_publisher"
             android:layout_marginTop="15dp"/>
 
 
