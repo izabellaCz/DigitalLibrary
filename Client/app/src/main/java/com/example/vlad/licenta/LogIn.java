@@ -123,5 +123,8 @@ public class LogIn extends AppCompatActivity {
         startActivity(intent1);
     }
 
+    @Override
+    public void onBackPressed() {
 
+    }
 }
