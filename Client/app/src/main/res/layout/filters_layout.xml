@@ -27,14 +27,6 @@
             android:orientation="horizontal"
             android:weightSum="1">
 
-            <TextView
-                android:id="@+id/tv_filterByTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="0.8"
-                android:text="Title: "/>
-
             <AutoCompleteTextView
                 android:id="@+id/tv_titleToFilter"
                 android:layout_width="match_parent"
@@ -57,14 +49,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="1">
-
-            <TextView
-                android:id="@+id/tv_filterByAuthor"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="0.8"
-                android:text="Author: "/>
 
             <AutoCompleteTextView
                 android:id="@+id/tv_authorToFilter"
@@ -89,14 +73,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="1">
-
-            <TextView
-                android:id="@+id/tv_filterByPublisher"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="0.8"
-                android:text="Publisher: "/>
 
             <AutoCompleteTextView
                 android:id="@+id/tv_publisherToFilter"
@@ -126,14 +102,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_weight="0.6"
+                android:layout_weight="0.7"
                 android:text="Only Available: "/>
 
             <CheckBox
                 android:id="@+id/cb_availabilityToFilter"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:layout_weight="0.2"/>
+                android:buttonTint="#ffffff"
+                android:layout_weight="0.3"/>
 
         </LinearLayout>
 
