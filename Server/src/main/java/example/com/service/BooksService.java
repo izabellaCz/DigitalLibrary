@@ -221,4 +221,31 @@ public class BooksService {
         return "-1";
     }
 
+    @RequestMapping(value = "/filter", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String filterBooks(@RequestParam String userId,
+                              @RequestParam(required = false) String title,
+                              @RequestParam(required = false) String author,
+                              @RequestParam(required = false) String publisher,
+                              @RequestParam(required = false) String isAvailable) {
+
+        try {
+            return objectMapper.writeValueAsString(booksDAO.filterBooks(userId, title, author, publisher, isAvailable));
+        } catch (Exception e) {
+            LOGGER.error("ERROR", e);
+        }
+        return "-1";
+    }
+
+    @RequestMapping(value = "/hasDueBooks", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String hasDueBooks(@RequestParam String userId, @RequestParam String currentDate) {
+        try {
+            return booksDAO.hasDueBooks(userId, currentDate);
+        } catch (Exception e) {
+            LOGGER.error("ERROR", e);
+        }
+        return "-1";
+    }
+
 }
