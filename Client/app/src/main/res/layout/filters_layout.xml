@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_register"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.vlad.licenta.FilterBooksActivity"
+    android:background="@mipmap/register">
+
+    <LinearLayout
+        android:id="@+id/filters_form"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <LinearLayout
+            android:id="@+id/ll_filterByTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <TextView
+                android:id="@+id/tv_filterByTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="0.8"
+                android:text="Title: "/>
+
+            <AutoCompleteTextView
+                android:id="@+id/tv_titleToFilter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Title"
+                android:inputType="text"
+                android:maxLines="1"
+                android:textSize="15dp"
+                android:backgroundTint="#99FFFFFF"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/background_light"
+                android:textColorLink="@android:color/white"
+                android:layout_weight="0.2"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_filterByAuthor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <TextView
+                android:id="@+id/tv_filterByAuthor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="0.8"
+                android:text="Author: "/>
+
+            <AutoCompleteTextView
+                android:id="@+id/tv_authorToFilter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Author"
+                android:inputType="text"
+                android:maxLines="1"
+                android:textSize="15dp"
+                android:backgroundTint="#99FFFFFF"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/background_light"
+                android:textColorLink="@android:color/white"
+                android:layout_weight="0.2"/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/ll_filterByPublisher"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <TextView
+                android:id="@+id/tv_filterByPublisher"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="0.8"
+                android:text="Publisher: "/>
+
+            <AutoCompleteTextView
+                android:id="@+id/tv_publisherToFilter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Publisher"
+                android:inputType="text"
+                android:maxLines="1"
+                android:textSize="15dp"
+                android:backgroundTint="#99FFFFFF"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/background_light"
+                android:textColorLink="@android:color/white"
+                android:layout_weight="0.2"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_filterByAvailability"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <TextView
+                android:id="@+id/tv_filterByAvailability"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="0.6"
+                android:text="Only Available: "/>
+
+            <CheckBox
+                android:id="@+id/cb_availabilityToFilter"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_weight="0.2"/>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_apply_filters"
+            style="?android:textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:text="Apply Filters"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:onClick="applyFilters"
+            android:background="#40FFFFFF"
+            android:textColorLink="@color/colorAccent"
+            tools:style="@style/Widget.AppCompat.Button.Borderless.Colored" />
+
+    </LinearLayout>
+
+</RelativeLayout>

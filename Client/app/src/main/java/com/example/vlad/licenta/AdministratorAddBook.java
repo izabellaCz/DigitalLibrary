@@ -34,10 +34,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by z003kf7w on 14.05.2017.
- */
-
 public class AdministratorAddBook extends AppCompatActivity {
 
     private AutoCompleteTextView tv_title, tv_publisher, tv_total, tv_cover, tv_description;

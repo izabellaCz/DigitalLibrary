@@ -47,7 +47,7 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
 
     private Boolean isFabOpen = false;
     private FloatingActionButton fab_settings, fab_add_book, fab_scan;
-    private Animation fab_open_scan, fab_close_scan, fab_open_add_book, fab_close_add_book;
+    private Animation fab_show, fab_hide;
 
     private boolean logout;
     private Timer logoutTimer;
@@ -71,14 +71,8 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
         fab_settings = (FloatingActionButton)findViewById(R.id.fab_settings);
         fab_add_book = (FloatingActionButton)findViewById(R.id.fab_add_book);
         fab_scan = (FloatingActionButton)findViewById(R.id.fab_scan);
-        fab_open_scan = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_scan_show);
-        fab_close_scan = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_scan_hide);
-        fab_open_add_book = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_add_show);
-        fab_close_add_book = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_add_hide);
-//        fab_open_scan = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
-//        fab_close_scan = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_close);
-//        fab_open_add_book = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
-//        fab_close_add_book = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_close);
+        fab_show = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_show);
+        fab_hide = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_hide);
         fab_settings.setOnClickListener(this);
         fab_add_book.setOnClickListener(this);
         fab_scan.setOnClickListener(this);
@@ -170,21 +164,24 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
 
                 addBookToDB();
                 break;
+
+            default:
+                break;
         }
     }
 
     public void animateFAB(){
         if(isFabOpen){
-            fab_add_book.startAnimation(fab_close_add_book);
-            fab_scan.startAnimation(fab_close_scan);
+            fab_add_book.startAnimation(fab_hide);
+            fab_scan.startAnimation(fab_hide);
             fab_add_book.setClickable(false);
             fab_scan.setClickable(false);
             isFabOpen = false;
             Log.d("Raj", "close");
 
         } else {
-            fab_add_book.startAnimation(fab_open_add_book);
-            fab_scan.startAnimation(fab_open_scan);
+            fab_add_book.startAnimation(fab_show);
+            fab_scan.startAnimation(fab_show);
             fab_add_book.setClickable(true);
             fab_scan.setClickable(true);
             isFabOpen = true;

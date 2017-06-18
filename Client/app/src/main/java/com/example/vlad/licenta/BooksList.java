@@ -1,6 +1,8 @@
 package com.example.vlad.licenta;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.ContextMenu;
@@ -19,20 +21,17 @@ import org.json.JSONArray;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BooksList extends Fragment {
+public class BooksList extends Fragment implements  View.OnClickListener{
 
     private ListView lv;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private final String KEY_TITLE = "Title";
-    private final String KEY_AUTHOR = "Author";
 
     private List<Book> listOfBooks;
 
     private static CustomAdapterBooks adapter;
     public static Fragment booksListFragment;
 
-    public static final String TAG = Client.class.getSimpleName();
-    protected JSONArray mTasksData;
+    private FloatingActionButton fab_filter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,6 +39,10 @@ public class BooksList extends Fragment {
         View rootView = inflater.inflate(R.layout.books_list, container, false);
 
         lv = (ListView) rootView.findViewById(R.id.listBooks);
+        fab_filter = (FloatingActionButton) rootView.findViewById(R.id.fab_filter);
+
+        if ( ((LoggedInActivity)getActivity()).getCurrentUser().getType().equals("ADMINISTRATOR") )
+            fab_filter.setVisibility(View.GONE);
 
         booksListFragment = this;
 
@@ -143,5 +146,18 @@ public class BooksList extends Fragment {
             }
         }
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        switch (id) {
+            case R.id.fab_filter:
+                Intent intent = new Intent(getContext().getApplicationContext(), FilterBooksActivity.class);
+                startActivity(intent);
+                break;
+            default:
+                break;
+        }
     }
 }

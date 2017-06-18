@@ -1,23 +1,31 @@
 deffects:
 DONE- display publisher
 DONE - block auto rotate
+Available books greater than total
 
 CLIENT:
 DONE-after return, history list item does not get refreshed 
 DONE-book availability -> under (book list && favorite list) set a text view displaying that is not available (if availability == 0 )
--history - wrong book details after failed "return book" (?)
+-history - wrong book details after failed "return book" (?) (TO BE TESTED!!)
 
 
 ADMIN:
--return book from client dialog (?)
+-return book from client dialog (?) (TO BE TESTED)
 DONE-fancy buttons - fucked up.. again...
--add book not tested --> add author: server request to INSERT author needs to be implemented (!!)
+
+#############################################################################################################################
+-add book --> crash! 
+
+DEBUG 06-13 21:41:16 Failed to resolve argument 0 of type 'java.lang.String'  (InvocableHandlerMethod.java:164) 
+org.springframework.web.bind.MissingServletRequestParameterException: Required String parameter 'title' is not present
+#############################################################################################################################
+
+DONE - add author: server request to INSERT author needs to be implemented
 DONE-rent book ?! (removed for admin side)
--history ?! - enventual un history de approves and denies
--on return book - weird toast message content
--show more details for books
--on approve/return - remove favorite button
--on approve/return - display transaction type message
+DONE !? -on return book - weird toast message content (TO BE TESTED!!)
+-show more details for books ( add publisher)
+DONE !? -on approve/return - remove favorite button (TO BE TESTED!!)
+DONE ?! -on approve/return - display transaction type message (TO BE TESTED!!)
 
 
 SERVER:
@@ -29,4 +37,7 @@ invalid character found in method name. http method names must be tokens
 
 
 Improvements:
--rent same book multiple times
+DONE-rent same book multiple times
+
+Wishlist
+-history ?! - enventual un history de approves and denies

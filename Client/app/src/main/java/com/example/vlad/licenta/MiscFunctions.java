@@ -88,6 +88,11 @@ public class MiscFunctions {
         final TextView tvDescription = (TextView) dialogView.findViewById(R.id.book_description_dialog);
         final ImageView imageBook = (ImageView) dialogView.findViewById(R.id.book_image_dialog);
 
+        final ImageButton addRemoveFavs = (ImageButton) dialogView.findViewById(R.id.ib_AddRemoveFav);
+        addRemoveFavs.setVisibility(View.INVISIBLE);
+
+        dialogBuilder.setTitle("Rent Book");
+
         Bitmap bm;
         if (book.getCover() == null) {
             bm = BitmapFactory.decodeResource(activity.getResources(), R.drawable.default_book_image);
@@ -118,7 +123,7 @@ public class MiscFunctions {
                                 if (obj != null && obj.equals("1")) {
                                     MiscFunctions.createToast(activity.getApplication(), "Book rent successful");
                                 } else {
-                                    MiscFunctions.createToast(activity.getApplication(), "Book rent unsuccessful \n" + obj);
+                                    MiscFunctions.createToast(activity.getApplication(), "Book rent unsuccessful");
                                 }
                             }
                         });
@@ -184,7 +189,9 @@ public class MiscFunctions {
         TextView tvReturnDays = (TextView) dialogView.findViewById(R.id.return_days_dialog);
 
         final ImageButton addRemoveFavs = (ImageButton) dialogView.findViewById(R.id.ib_AddRemoveFav);
-        addRemoveFavs.setVisibility(View.GONE);
+        addRemoveFavs.setVisibility(View.INVISIBLE);
+
+        dialogBuilder.setTitle("Return Book");
 
         Bitmap bm;
         if (book.getCover() == null) {
@@ -232,7 +239,7 @@ public class MiscFunctions {
                                 if (obj != null && obj.equals("1")) {
                                     MiscFunctions.createToast(activity.getApplication(), "Book return successful");
                                 } else {
-                                    MiscFunctions.createToast(activity.getApplication(), "Book return unsuccessful \n" + obj);
+                                    MiscFunctions.createToast(activity.getApplication(), "Book return unsuccessful");
                                 }
                             }
                         });
