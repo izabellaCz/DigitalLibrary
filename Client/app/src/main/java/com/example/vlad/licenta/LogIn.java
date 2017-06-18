@@ -63,11 +63,11 @@ public class LogIn extends AppCompatActivity {
     }
 
     public void logInMethod(View view){
-        /*emailView.setText("admin");
-        passwordView.setText("admin");*/
+        emailView.setText("admin");
+        passwordView.setText("admin");
 
-        emailView.setText("iza@iza.com");
-        passwordView.setText("password");
+//        emailView.setText("iza@iza.com");
+//        passwordView.setText("password");
 
         String email = emailView.getText().toString();
         String password = passwordView.getText().toString();

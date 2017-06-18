@@ -66,6 +66,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.4"
                     android:text="Add"
+                    android:background="#40FFFFFF"
                     />
         </LinearLayout>
 
@@ -124,6 +125,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.3"
+                android:background="#40FFFFFF"
                 android:text="Add Cover"
                 />
         </LinearLayout>
