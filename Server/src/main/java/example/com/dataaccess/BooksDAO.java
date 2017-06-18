@@ -341,31 +341,32 @@ public class BooksDAO {
                     "   WHERE history_user_id = " + userId +
                     "   ) AS h on h.history_book_id = b.book_id ");
 
-            StringBuilder filters = new StringBuilder("WHERE");
+            StringBuilder filters = new StringBuilder();
 
-            if (title != null) {
+            if (title != null && !title.isEmpty()) {
                 filters.append(" b.title like '%" + title + "%' ");
             }
-            if (author != null) {
-                if (!filters.equals("WHERE")) {
+            if (author != null && !author.isEmpty()) {
+                if (filters.length() != 0) {
                     filters.append(" and ");
                 }
                 filters.append(" a.name like '%" + author + "%' ");
             }
-            if (publisher != null) {
-                if (!filters.equals("WHERE")) {
+            if (publisher != null && !publisher.isEmpty()) {
+                if (filters.length() != 0) {
                     filters.append(" and ");
                 }
                 filters.append(" b.publisher like '%" + publisher + "%' ");
             }
-            if (isAvailable != null) {
-                if (!filters.equals("WHERE")) {
+            if (isAvailable != null && !isAvailable.isEmpty()) {
+                if (filters.length() != 0) {
                     filters.append(" and ");
                 }
                 filters.append(" b.available > 0 ");
             }
 
-            if (!filters.equals("WHERE")) {
+            if (filters.length() != 0) {
+                query.append(" WHERE");
                 query.append(filters);
             }
 
