@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -32,7 +33,13 @@ public class ServerRequestGET<T> extends AsyncTask<Void, Void, T> {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
 
-        String jsonResponse = restTemplate.getForObject(url, String.class);
+        String jsonResponse;
+        try {
+            jsonResponse = restTemplate.getForObject(url, String.class);
+        } catch (RestClientException e) {
+            e.printStackTrace();
+            return null;
+        }
 
         if (jsonResponse == null) return null;  // no results found
 

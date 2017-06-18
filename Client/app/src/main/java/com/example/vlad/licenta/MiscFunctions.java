@@ -108,19 +108,20 @@ public class MiscFunctions {
         tvDescription.setText(book.getDescription());
         tvDescription.setMovementMethod(new ScrollingMovementMethod());
 
-        dialogBuilder.setPositiveButton("Approve", new DialogInterface.OnClickListener() {
+        dialogBuilder.setPositiveButton("Approve Rent", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String url = ServerProperties.HOST;
                 url += "/library/rentBook?userId=" + userId
                         + "&bookId=" + book.getId()
+                        + "&approverId=" + ((Administrator) activity).getCurrentUser().getId()
                         + "&loanDate=" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
                 ServerRequestGET<String> rentBookRequest = new ServerRequestGET<String>(url, TypeFactory.defaultInstance().constructType(String.class),
                         new AsyncResponse<String>() {
                             @Override
                             public void actionCompleted(String obj) {
-                                if (obj != null && obj.equals("1")) {
+                                if (obj != null && !obj.equals("-1")) {
                                     MiscFunctions.createToast(activity.getApplication(), "Book rent successful");
                                 } else {
                                     MiscFunctions.createToast(activity.getApplication(), "Book rent unsuccessful");
@@ -160,7 +161,7 @@ public class MiscFunctions {
                 new AsyncResponse<Book>() {
                     @Override
                     public void actionCompleted(Book obj) {
-                        if (obj != null) {
+                        if (obj != null && !obj.equals("-1")) {
                             MiscFunctions.createReturnAlertDialog(activity, obj);
                         } else {
                             MiscFunctions.createToast(activity.getApplicationContext(), "Invalid history data");
@@ -225,18 +226,19 @@ public class MiscFunctions {
                 tvReturnDays.setTextColor(Color.rgb(40, 60, 200));
             }
         }
-        dialogBuilder.setPositiveButton("Approve", new DialogInterface.OnClickListener() {
+        dialogBuilder.setPositiveButton("Approve Return", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String url = ServerProperties.HOST;
                 url += "/library/returnBook?historyId=" + book.getHistory().getId()
+                        + "&approverId=" + ((Administrator) activity).getCurrentUser().getId()
                         + "&returnDate=" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
                 ServerRequestGET<String> returnBookRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(String.class),
                         new AsyncResponse<String>() {
                             @Override
                             public void actionCompleted(String obj) {
-                                if (obj != null && obj.equals("1")) {
+                                if (obj != null && !obj.equals("-1")) {
                                     MiscFunctions.createToast(activity.getApplication(), "Book return successful");
                                 } else {
                                     MiscFunctions.createToast(activity.getApplication(), "Book return unsuccessful");
@@ -284,22 +286,16 @@ public class MiscFunctions {
 
         final ImageButton addRemoveFavs = (ImageButton) dialogView.findViewById(R.id.ib_AddRemoveFav);
 
-        if (((LoggedInActivity)activ).getCurrentUser().getType().compareTo("ADMINISTRATOR") == 0 )
-        {
+        if (((LoggedInActivity)activ).getCurrentUser().getType().compareTo("ADMINISTRATOR") == 0 ) {
             addRemoveFavs.setVisibility(View.INVISIBLE);
         }
-        else
-        {
-            if (book.isFavourite())
+        else {
+            if (book.isFavourite()) {
                 addRemoveFavs.setImageBitmap(BitmapFactory.decodeResource(activ.getResources(), R.drawable.fav_minus_small));
-
+            }
             addRemoveFavs.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // server request...
-
-                    // onServerRequestiCompletion change image
-
                     String url = ServerProperties.HOST;
                     url += "/library";
                     url += !book.isFavourite() ? "/addFavourite" : "/removeFavourite";
@@ -308,29 +304,52 @@ public class MiscFunctions {
                     url += "&bookId=" + book.getId();
 
                     ServerRequestGET<String> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(String.class),
-                            new AsyncResponse<String>() {
-                                @Override
-                                public void actionCompleted(String obj) {
-                                    if (obj != null && obj.compareTo("1") == 0) {
-                                        if ( book.isFavourite() ) {
-                                            book.setFavourite(false);
-                                            addRemoveFavs.setImageBitmap(BitmapFactory.decodeResource(activ.getResources(), R.drawable.fav_plus_small));
-                                        } else {
-                                            book.setFavourite(true);
-                                            addRemoveFavs.setImageBitmap(BitmapFactory.decodeResource(activ.getResources(), R.drawable.fav_minus_small));
-                                        }
-                                        MiscFunctions.createToast(activ.getApplicationContext(), "Success");
+                        new AsyncResponse<String>() {
+                            @Override
+                            public void actionCompleted(String obj) {
+                                if (obj != null && obj.compareTo("1") == 0) {
+                                    if ( book.isFavourite() ) {
+                                        book.setFavourite(false);
+                                        addRemoveFavs.setImageBitmap(BitmapFactory.decodeResource(activ.getResources(), R.drawable.fav_plus_small));
+                                    } else {
+                                        book.setFavourite(true);
+                                        addRemoveFavs.setImageBitmap(BitmapFactory.decodeResource(activ.getResources(), R.drawable.fav_minus_small));
                                     }
-                                    else
-                                        MiscFunctions.createToast(activ.getApplicationContext(), "Failed");
-
+                                    MiscFunctions.createToast(activ.getApplicationContext(), "Success");
                                 }
-                            });
+                                else
+                                    MiscFunctions.createToast(activ.getApplicationContext(), "Failed");
 
-                    theServerRequest.execute();
+                            }
+                        });
+
+                        theServerRequest.execute();
 
                 }
             });
+
+            if (book.getHistory().getLoanDate() != null && book.getHistory().getReturnDate() == null) {
+            /* to be returned */
+                dialogBuilder.setPositiveButton("Return Book", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent (activ, qrGeneratePage.class);
+                        intent.putExtra("bitmap", qrGenerate(QRTransaction.RETURN, ((LoggedInActivity) activ).getCurrentUser().getId(), book));
+                        activ.startActivity(intent);
+                    }
+                });
+            } else {
+
+            /* to be rented */
+                dialogBuilder.setPositiveButton("Rent Book", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent (activ, qrGeneratePage.class);
+                        intent.putExtra("bitmap", qrGenerate(QRTransaction.RENT, ((LoggedInActivity) activ).getCurrentUser().getId(), book));
+                        activ.startActivity(intent);
+                    }
+                });
+            }
         }
 
         final Bitmap bm;
@@ -365,33 +384,6 @@ public class MiscFunctions {
                 tvReturnDays.setTextColor(Color.rgb(40, 60, 200));
             }
         }
-
-        if (((LoggedInActivity)activ).getCurrentUser().getType().compareTo("ADMINISTRATOR") == 1 )
-        {
-            if (book.getHistory().getLoanDate() != null && book.getHistory().getReturnDate() == null) {
-            /* to be returned */
-                dialogBuilder.setPositiveButton("Return Book", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent (activ, qrGeneratePage.class);
-                        intent.putExtra("bitmap", qrGenerate(QRTransaction.RETURN, ((LoggedInActivity) activ).getCurrentUser().getId(), book));
-                        activ.startActivity(intent);
-                    }
-                });
-            } else {
-
-            /* to be rented */
-                dialogBuilder.setPositiveButton("Rent Book", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent (activ, qrGeneratePage.class);
-                        intent.putExtra("bitmap", qrGenerate(QRTransaction.RENT, ((LoggedInActivity) activ).getCurrentUser().getId(), book));
-                        activ.startActivity(intent);
-                    }
-                });
-            }
-        }
-
 
         dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {

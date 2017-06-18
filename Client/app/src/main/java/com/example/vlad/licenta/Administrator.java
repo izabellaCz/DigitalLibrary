@@ -95,7 +95,6 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
                  * Rent/Return Book - "approve" by Administrator
                  */
                 String scanResult = result.getContents();
-                Toast.makeText(this, scanResult, Toast.LENGTH_LONG).show();
 
                 String[] tokenizer = scanResult.split(",");
 
