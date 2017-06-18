@@ -1,6 +1,5 @@
 package com.example.vlad.licenta;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -23,18 +22,13 @@ import android.widget.Toast;
 
 import com.example.vlad.licenta.model.QRTransaction;
 import com.example.vlad.licenta.model.User;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class Administrator extends AppCompatActivity implements View.OnClickListener, LoggedInActivity{
-
-    int CAMERA_REQUEST =1;
 
 
     private AdministratorTabs mSectionsPagerAdapter;
@@ -57,7 +51,8 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_administrator);
-       // mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        currentUser = (User) getIntent().getSerializableExtra("currentUser");
+
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -77,7 +72,6 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
         fab_add_book.setOnClickListener(this);
         fab_scan.setOnClickListener(this);
 
-        currentUser = (User) getIntent().getSerializableExtra("currentUser");
         logout = false;
         logoutTimer = new Timer();
 
@@ -91,9 +85,6 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
                 Toast.makeText(this, "You cancelled the scanning", Toast.LENGTH_LONG).show();
 
             } else {
-                /**
-                 * Rent/Return Book - "approve" by Administrator
-                 */
                 String scanResult = result.getContents();
 
                 String[] tokenizer = scanResult.split(",");

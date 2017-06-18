@@ -16,8 +16,6 @@ import android.widget.ListView;
 import com.example.vlad.licenta.model.Book;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
-import org.json.JSONArray;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,13 +31,17 @@ public class BooksList extends Fragment implements  View.OnClickListener{
 
     private FloatingActionButton fab_filter;
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
 
         View rootView = inflater.inflate(R.layout.books_list, container, false);
 
         lv = (ListView) rootView.findViewById(R.id.listBooks);
         fab_filter = (FloatingActionButton) rootView.findViewById(R.id.fab_filter);
+        fab_filter.setOnClickListener(this);
 
         if ( ((LoggedInActivity)getActivity()).getCurrentUser().getType().equals("ADMINISTRATOR") )
             fab_filter.setVisibility(View.GONE);
@@ -87,26 +89,19 @@ public class BooksList extends Fragment implements  View.OnClickListener{
 
             @Override
             public void onRefresh() {
-                String url = ServerProperties.HOST;
-                url += "/library/list?userId=";
-                url += ((LoggedInActivity) getActivity()).getCurrentUser().getId();
-
-                ServerRequestGET<List<Book>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Book.class),
-                        new AsyncResponse<List<Book>>() {
-                            @Override
-                            public void actionCompleted(List<Book> res) {
-                                if (res == null) res = new ArrayList<>();
-                                listOfBooks = res;
-                                adapter.refresh(listOfBooks);
-                            }
-                        });
-
-                theServerRequest.execute();
+                refresh();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
 
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        refresh();
     }
 
     @Override
@@ -128,24 +123,38 @@ public class BooksList extends Fragment implements  View.OnClickListener{
         if ( this.isVisible() )
         {
             if ( isVisibleToUser ) {
-                String url = ServerProperties.HOST;
-                url += "/library/list?userId=";
-                url += ((LoggedInActivity) getActivity()).getCurrentUser().getId();
-
-                ServerRequestGET<List<Book>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Book.class),
-                        new AsyncResponse<List<Book>>() {
-                            @Override
-                            public void actionCompleted(List<Book> res) {
-                                if (res == null) res = new ArrayList<>();
-                                listOfBooks = res;
-                                adapter.refresh(listOfBooks);
-                            }
-                        });
-
-                theServerRequest.execute();
+                refresh();
             }
         }
 
+    }
+
+    private void refresh()
+    {
+
+        Filters filters = Filters.getInstance();
+
+        String url = ServerProperties.HOST;
+        url += "/library/filter?userId=";
+        url += ((LoggedInActivity) getActivity()).getCurrentUser().getId();
+        url += "&author=" + filters.getAuthor();
+        url += "&title=" + filters.getTitle();
+        url += "&publisher=" + filters.getPublisher();
+        url += "&isAvailable=" + filters.getAvailable();
+
+        ServerRequestGET<List<Book>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Book.class),
+                new AsyncResponse<List<Book>>() {
+                    @Override
+                    public void actionCompleted(List<Book> res) {
+                        if (res == null) res = new ArrayList<>();
+                        listOfBooks = res;
+                        adapter.refresh(listOfBooks);
+                        if ( listOfBooks.size() == 0 )
+                            MiscFunctions.createToast(getContext().getApplicationContext(), "No books were found!");
+                    }
+                });
+
+        theServerRequest.execute();
     }
 
     @Override

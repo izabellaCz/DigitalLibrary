@@ -9,14 +9,14 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.vlad.licenta.FilterBooksActivity"
-    android:background="@mipmap/register">
+    android:background="@mipmap/clear_background">
 
     <LinearLayout
         android:id="@+id/filters_form"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
@@ -137,20 +137,21 @@
 
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btn_apply_filters"
-            style="?android:textAppearanceSmall"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="16dp"
-            android:text="Apply Filters"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:onClick="applyFilters"
-            android:background="#40FFFFFF"
-            android:textColorLink="@color/colorAccent"
-            tools:style="@style/Widget.AppCompat.Button.Borderless.Colored" />
-
     </LinearLayout>
 
+
+    <Button
+        android:id="@+id/btn_apply_filters"
+        style="?android:textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:text="Apply Filters"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:onClick="applyFilters"
+        android:background="#40FFFFFF"
+        android:textColorLink="@color/colorAccent"
+        android:layout_alignParentBottom="true"
+        tools:style="@style/Widget.AppCompat.Button.Borderless.Colored" />
 </RelativeLayout>

@@ -23,12 +23,25 @@ public class FilterBooksActivity extends AppCompatActivity {
         tv_filterPublisher = (AutoCompleteTextView) findViewById(R.id.tv_publisherToFilter);
 
         cb_Availability = (CheckBox) findViewById(R.id.cb_availabilityToFilter);
+
+        Filters tempFilter = Filters.getInstance();
+        tv_filterAuthor.setText(tempFilter.getAuthor());
+        tv_filterTitle.setText(tempFilter.getTitle());
+        tv_filterPublisher.setText(tempFilter.getPublisher());
+        if ( !tempFilter.getAvailable().equals("") )
+            cb_Availability.setChecked(true);
     }
 
     public void applyFilters(View v)
     {
-        // make server request
-        //TODO: ...
+        Filters tempFilter = Filters.getInstance();
+        tempFilter.setAuthor(tv_filterAuthor.getText().toString());
+        tempFilter.setTitle(tv_filterTitle.getText().toString());
+        tempFilter.setPublisher(tv_filterPublisher.getText().toString());
+        if (cb_Availability.isChecked())
+            tempFilter.setAvailable(String.valueOf(cb_Availability.isChecked()));
+        else
+            tempFilter.setAvailable("");
+        finish();
     }
-
 }
