@@ -69,7 +69,7 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
         fab_filter = (FloatingActionButton) findViewById(R.id.fab_filter);
 
         fab_show = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_show);
-        fab_hide = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_hide);
+        fab_hide = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_hide);
 
         fab_settings.setOnClickListener(this);
         fab_add_book.setOnClickListener(this);
@@ -176,21 +176,65 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
             fab_add_book.startAnimation(fab_hide);
             fab_scan.startAnimation(fab_hide);
             fab_filter.startAnimation(fab_hide);
+
+            fab_hide.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    fab_add_book.setVisibility(View.GONE);
+                    fab_scan.setVisibility(View.GONE);
+                    fab_filter.setVisibility(View.GONE);
+                    fab_add_book.clearAnimation();
+                    fab_scan.clearAnimation();
+                    fab_filter.clearAnimation();
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+
             fab_add_book.setClickable(false);
             fab_scan.setClickable(false);
             fab_filter.setClickable(false);
             isFabOpen = false;
-            Log.d("Raj", "close");
 
         } else {
             fab_add_book.startAnimation(fab_show);
             fab_scan.startAnimation(fab_show);
             fab_filter.startAnimation(fab_show);
+            fab_show.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    fab_add_book.setVisibility(View.VISIBLE);
+                    fab_scan.setVisibility(View.VISIBLE);
+                    fab_filter.setVisibility(View.VISIBLE);
+                    fab_add_book.clearAnimation();
+                    fab_scan.clearAnimation();
+                    fab_filter.clearAnimation();
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+
+
             fab_add_book.setClickable(true);
             fab_scan.setClickable(true);
             fab_filter.setClickable(true);
             isFabOpen = true;
-            Log.d("Raj","open");
 
         }
     }
