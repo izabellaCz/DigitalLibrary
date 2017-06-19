@@ -32,7 +32,7 @@ public class UserService {
         } catch (Exception e) {
             LOGGER.error(e);
         }
-        return "-1";
+        return null;
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.GET, params = {"username","password","type"}, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -49,5 +49,15 @@ public class UserService {
         return "-1";
     }
 
+    @RequestMapping(value = "/getUser", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String getUser(@RequestParam String userId) {
+        try {
+            return objectMapper.writeValueAsString(usersDAO.getUserById(userId));
+        } catch (Exception e) {
+            LOGGER.error(e);
+        }
+        return null;
+    }
 
 }

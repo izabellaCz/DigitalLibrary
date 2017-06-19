@@ -36,6 +36,20 @@ public class UsersDAO {
 
     }
 
+    public User getUserById(String userId) throws SQLException {
+        try (Connection connection = DAOTemplate.getDataSource().getConnection()) {
+            String query = "SELECT * FROM users WHERE user_id=" + userId + ";";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+            LOGGER.debug("Executing query: " + query);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            resultSet.next();
+            return User.constructFromResultSet(resultSet);
+        }
+    }
+
     public int registerUser(String fullname, String username, String password, String type) throws SQLException {
         return DAOTemplate.executeUpdate("INSERT INTO users (fullname, username, password, type) VALUES ('" +
                 fullname + "', '" +
