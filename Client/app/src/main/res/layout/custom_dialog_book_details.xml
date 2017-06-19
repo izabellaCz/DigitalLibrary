@@ -89,12 +89,25 @@
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/book_image_dialog"
             android:layout_marginStart="10dp"
-            android:text="descriere..."
+            android:text="descriere...\nvghgghf\n"
             android:maxLines = "12"
             android:scrollbars = "vertical"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:layout_alignTop="@+id/book_image_dialog"
             android:textColor="@android:color/black" />
 
+    <TextView
+        android:id="@+id/rent_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:maxLines="2"
+        android:text="loan details"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_marginTop="17dp"
+        android:layout_marginStart="10dp"
+        android:textColor="@android:color/black"
+        android:layout_below="@+id/book_description_dialog"
+        android:layout_toEndOf="@+id/book_image_dialog"/>
 
 </RelativeLayout>

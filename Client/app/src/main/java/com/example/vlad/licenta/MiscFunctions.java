@@ -18,6 +18,8 @@ import android.widget.Toast;
 
 import com.example.vlad.licenta.model.Book;
 import com.example.vlad.licenta.model.QRTransaction;
+import com.example.vlad.licenta.model.User;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
@@ -403,6 +405,87 @@ public class MiscFunctions {
         if ( book.getHistory().getLoanDate() == null && book.getAvailable() == 0 ) {
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
         }
+
+        return 0;
+    }
+
+    public static int createAdminHistoryDetailsDialog(final Activity activ, final Book book) {
+
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activ);
+        final LayoutInflater inflater = activ.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.custom_dialog_book_details, null);
+        dialogBuilder.setView(dialogView);
+
+
+        String url = ServerProperties.HOST +
+                "/user/getUser?userId=" +
+                book.getHistory().getUserId();
+        final String[] rentDetails = new String[1];
+        ServerRequestGET<User> getUser = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(User.class), new AsyncResponse<User>() {
+            @Override
+            public void actionCompleted(User obj) {
+                if (obj == null) return;
+                String text = "Rented by '" + obj.getUsername() + "'";
+                TextView tvRentDetails = ((TextView) dialogView.findViewById(R.id.rent_details));
+                tvRentDetails.setText(text);
+                tvRentDetails.setVisibility(View.VISIBLE);
+            }
+        });
+        getUser.execute();
+
+        TextView tvTitle = (TextView) dialogView.findViewById(R.id.tv_title);
+        TextView tvAuthor = (TextView) dialogView.findViewById(R.id.tv_author);
+        TextView tvPublisher = (TextView) dialogView.findViewById(R.id.tv_publisher);
+        TextView tvLoanDate = (TextView) dialogView.findViewById(R.id.loan_date_dialog);
+        TextView tvReturnDays = (TextView) dialogView.findViewById(R.id.return_days_dialog);
+        TextView tvDescription = (TextView) dialogView.findViewById(R.id.book_description_dialog);
+        ImageView imageBook = (ImageView) dialogView.findViewById(R.id.book_image_dialog);
+
+        dialogView.findViewById(R.id.ib_AddRemoveFav).setVisibility(View.INVISIBLE);
+
+        final Bitmap bm;
+        if (book.getCover() == null) {
+            bm = BitmapFactory.decodeResource(activ.getResources(), R.drawable.default_book_image);
+        } else {
+            bm = BitmapFactory.decodeByteArray(book.getCover(), 0, book.getCover().length);
+        }
+
+        imageBook.setImageBitmap(bm);
+
+        tvTitle.setText(book.getTitle());
+        tvAuthor.setText(book.getAuthor().getName());
+        tvPublisher.setText(book.getPublisher());
+
+        tvDescription.setText(book.getDescription());
+        tvDescription.setMovementMethod(new ScrollingMovementMethod());
+
+        if (book.getHistory().getLoanDate() != null) {
+            tvLoanDate.setText("Rented on: \n"
+                    + book.getHistory().getLoanDate().toString().substring(0, 10));
+
+            if (book.getHistory().getReturnDate() == null) {
+                int days = (int) ((book.getHistory().getLoanDate().getTime() - new java.sql.Date(new Date().getTime()).getTime()) / MILLISECONDS_IN_DAY);
+                days += LOAN_DAYS;
+                tvReturnDays.setText("Days left: \n"
+                        + String.valueOf(days));
+                if (days <= 5) tvReturnDays.setTextColor(Color.rgb(255, 0, 0));
+                else if (days <= 10) tvReturnDays.setTextColor(Color.rgb(255, 145, 0));
+                else tvReturnDays.setTextColor(Color.rgb(0, 128, 0));
+            } else {
+                tvReturnDays.setText("Returned");
+                tvReturnDays.setTextColor(Color.rgb(40, 60, 200));
+            }
+        }
+
+        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //pass
+            }
+        });
+
+        AlertDialog dialog = dialogBuilder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
 
         return 0;
     }

@@ -37,7 +37,7 @@ public class AdministratorTabs extends FragmentPagerAdapter {
             case 0:
                 return new BooksList();
             case 1:
-                return new HistoryList();
+                return new AdminHistoryList();
 
             default:
                 return null;
