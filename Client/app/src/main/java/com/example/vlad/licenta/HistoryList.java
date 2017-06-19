@@ -12,8 +12,6 @@ import android.widget.ListView;
 import com.example.vlad.licenta.model.Book;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
-import org.json.JSONArray;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,16 +19,9 @@ public class HistoryList extends Fragment {
 
     private ListView lv;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private final String KEY_TITLE = "Title";
-    private final String KEY_AUTHOR = "Author";
     private List<Book> booksInHistory;
     private static CustomAdapterHistoryBooks adapter;
     public static Fragment historyListFragment;
-
-
-    public static final String TAG = Client.class.getSimpleName();
-    protected JSONArray mTasksData;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
