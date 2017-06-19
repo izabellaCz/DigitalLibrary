@@ -47,7 +47,7 @@ public class AuthorsService {
         } catch (Exception e) {
             LOGGER.error(e);
         }
-        return "-1";
+        return null;
 
     }
 

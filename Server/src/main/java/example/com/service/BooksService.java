@@ -34,7 +34,7 @@ public class BooksService {
         } catch (Exception e) {
             LOGGER.error("ERROR", e);
         }
-        return "-1";
+        return null;
     }
 
     @RequestMapping(value = "/list", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -207,18 +207,18 @@ public class BooksService {
         } catch (Exception e) {
             LOGGER.error("ERROR", e);
         }
-        return "-1";
+        return null;
     }
 
     @RequestMapping(value = "/getAdminHistory", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String getAdminHistory(@RequestParam String adminId) {
+    public String getAdminHistory(@RequestParam String userId) {
         try {
-            return objectMapper.writeValueAsString(booksDAO.getAdminsApproves(adminId));
+            return objectMapper.writeValueAsString(booksDAO.getAdminsApproves(userId));
         } catch (Exception e) {
             LOGGER.error("ERROR", e);
         }
-        return "-1";
+        return null;
     }
 
     @RequestMapping(value = "/filter", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -234,7 +234,7 @@ public class BooksService {
         } catch (Exception e) {
             LOGGER.error("ERROR", e);
         }
-        return "-1";
+        return null;
     }
 
     @RequestMapping(value = "/hasDueBooks", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
