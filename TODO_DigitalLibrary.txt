@@ -18,12 +18,14 @@ DONE-fancy buttons - fucked up.. again...
 
 DEBUG 06-13 21:41:16 Failed to resolve argument 0 of type 'java.lang.String'  (InvocableHandlerMethod.java:164) 
 org.springframework.web.bind.MissingServletRequestParameterException: Required String parameter 'title' is not present
+
+!!! probable cause: tomcat configuration missing
 #############################################################################################################################
 
 DONE - add author: server request to INSERT author needs to be implemented
 DONE-rent book ?! (removed for admin side)
 DONE !? -on return book - weird toast message content (TO BE TESTED!!)
--show more details for books ( add publisher)
+DONE-ISH-show more details for books ( add publisher)
 DONE !? -on approve/return - remove favorite button (TO BE TESTED!!)
 DONE ?! -on approve/return - display transaction type message (TO BE TESTED!!)
 
