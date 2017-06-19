@@ -58,6 +58,7 @@ public class BooksList extends Fragment implements  View.OnClickListener{
                 new AsyncResponse<List<Book>>() {
                     @Override
                     public void actionCompleted(List<Book> res) {
+                        if (res == null) res = new ArrayList<>();
                         listOfBooks = res;
                         adapter = new CustomAdapterBooks(listOfBooks, getContext());
                         lv.setAdapter(adapter);

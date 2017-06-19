@@ -97,6 +97,7 @@ public class AdministratorAddBook extends AppCompatActivity {
                 new AsyncResponse<List<Author>>() {
                     @Override
                     public void actionCompleted(List<Author> obj) {
+                        if (obj == null) obj = new ArrayList<>();
                         List<String> arraySpinner = new ArrayList<>();
                         arraySpinner.add("Choose Author");
                         for (Author author : obj) {
