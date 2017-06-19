@@ -1,7 +1,7 @@
 deffects:
 DONE- display publisher
 DONE - block auto rotate
-Available books greater than total
+Available books greater than total (TO BE TESTED)
 
 CLIENT:
 DONE-after return, history list item does not get refreshed 
@@ -42,4 +42,4 @@ Improvements:
 DONE-rent same book multiple times
 
 Wishlist
--history ?! - enventual un history de approves and denies
+DONE -history - enventual un history de approves (needs more testing!!)
