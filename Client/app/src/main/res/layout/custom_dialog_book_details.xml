@@ -103,6 +103,7 @@
         android:textAlignment="center"
         android:maxLines="2"
         android:text="loan details"
+        android:visibility="gone"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:layout_marginTop="17dp"
         android:layout_marginStart="10dp"
