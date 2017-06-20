@@ -115,7 +115,8 @@ public class BooksDAO {
     public int rentBook(String userId, String bookId, String loanDate, String approverId) throws SQLException {
         return DAOTemplate.executeUpdate("insert into history (history_user_id, history_book_id, loan_date, loan_appr_id) " +
                 "values (" + userId + ", " + bookId + ", '" + loanDate + "', " + approverId + ") " +
-                "ON DUPLICATE KEY UPDATE loan_date='" + loanDate + "', return_date = null, return_appr_id = null; " +
+                "ON DUPLICATE KEY UPDATE loan_date='" + loanDate + "', loan_appr_id=" + approverId +
+                ", return_date = null, return_appr_id = null; " +
                 "update books set available = available - 1 where book_id = " + bookId + ";");
 
     }
@@ -234,7 +235,8 @@ public class BooksDAO {
                     "FROM books AS b " +
                     "JOIN authors AS a ON a.author_id = b.book_author_id " +
                     "JOIN history AS h on h.history_book_id = b.book_id " +
-                    "WHERE history_user_id = " + userId + ";";
+                    "WHERE history_user_id = " + userId + " " +
+                    "ORDER BY h.return_date, h.loan_date;";
 
             PreparedStatement preparedStatement = connection.prepareStatement(query);
 
@@ -310,7 +312,8 @@ public class BooksDAO {
                     "FALSE AS  `is_favourite` FROM books AS b " +
                     "JOIN authors AS a ON a.author_id = b.book_author_id " +
                     "JOIN ( SELECT * FROM history WHERE loan_appr_id = " + adminId +
-                    " or return_appr_id = " + adminId + " ) AS h on h.history_book_id = b.book_id ";
+                    " OR return_appr_id = " + adminId + " ) AS h ON h.history_book_id = b.book_id " +
+                    "ORDER BY h.return_date, h.loan_date;";
 
             PreparedStatement preparedStatement = connection.prepareStatement(query);
 
