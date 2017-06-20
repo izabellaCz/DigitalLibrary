@@ -221,8 +221,11 @@ public class MiscFunctions {
             if (book.getHistory().getReturnDate() == null) {
                 int days = (int) ((book.getHistory().getLoanDate().getTime() - new java.sql.Date(new Date().getTime()).getTime()) / MILLISECONDS_IN_DAY);
                 days += LOAN_DAYS;
-                tvReturnDays.setText("Days left: \n"
-                        + String.valueOf(days));
+                if (days < 0) {
+                    tvReturnDays.setText("" + -days + " days \n late");
+                } else {
+                    tvReturnDays.setText("Days left: \n" + days);
+                }
                 if (days <= 5) tvReturnDays.setTextColor(Color.rgb(255, 0, 0));
                 else if (days <= 10) tvReturnDays.setTextColor(Color.rgb(255, 145, 0));
                 else tvReturnDays.setTextColor(Color.rgb(0, 128, 0));
@@ -381,8 +384,11 @@ public class MiscFunctions {
             if (book.getHistory().getReturnDate() == null) {
                 int days = (int) ((book.getHistory().getLoanDate().getTime() - new java.sql.Date(new Date().getTime()).getTime()) / MILLISECONDS_IN_DAY);
                 days += LOAN_DAYS;
-                tvReturnDays.setText("Days left: \n"
-                        + String.valueOf(days));
+                if (days < 0) {
+                    tvReturnDays.setText("" + -days + " days \n late");
+                } else {
+                    tvReturnDays.setText("Days left: \n" + days);
+                }
                 if (days <= 5) tvReturnDays.setTextColor(Color.rgb(255, 0, 0));
                 else if (days <= 10) tvReturnDays.setTextColor(Color.rgb(255, 145, 0));
                 else tvReturnDays.setTextColor(Color.rgb(0, 128, 0));
@@ -466,8 +472,11 @@ public class MiscFunctions {
             if (book.getHistory().getReturnDate() == null) {
                 int days = (int) ((book.getHistory().getLoanDate().getTime() - new java.sql.Date(new Date().getTime()).getTime()) / MILLISECONDS_IN_DAY);
                 days += LOAN_DAYS;
-                tvReturnDays.setText("Days left: \n"
-                        + String.valueOf(days));
+                if (days < 0) {
+                    tvReturnDays.setText("" + -days + " days \n late");
+                } else {
+                    tvReturnDays.setText("Days left: \n" + days);
+                }
                 if (days <= 5) tvReturnDays.setTextColor(Color.rgb(255, 0, 0));
                 else if (days <= 10) tvReturnDays.setTextColor(Color.rgb(255, 145, 0));
                 else tvReturnDays.setTextColor(Color.rgb(0, 128, 0));
