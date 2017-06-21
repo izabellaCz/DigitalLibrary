@@ -48,24 +48,7 @@ public class BooksList extends Fragment implements  View.OnClickListener{
 
         booksListFragment = this;
 
-        listOfBooks = new ArrayList<>();
-
-        String url = ServerProperties.HOST;
-        url += "/library/list?userId=";
-        url += ((LoggedInActivity)getActivity()).getCurrentUser().getId();
-
-        ServerRequestGET<List<Book>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Book.class),
-                new AsyncResponse<List<Book>>() {
-                    @Override
-                    public void actionCompleted(List<Book> res) {
-                        if (res == null) res = new ArrayList<>();
-                        listOfBooks = res;
-                        adapter = new CustomAdapterBooks(listOfBooks, getContext());
-                        lv.setAdapter(adapter);
-                    }
-                });
-
-        theServerRequest.execute();
+        refresh();
 
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -132,7 +115,6 @@ public class BooksList extends Fragment implements  View.OnClickListener{
 
     private void refresh()
     {
-
         Filters filters = Filters.getInstance();
 
         String url = ServerProperties.HOST;
@@ -149,6 +131,10 @@ public class BooksList extends Fragment implements  View.OnClickListener{
                     public void actionCompleted(List<Book> res) {
                         if (res == null) res = new ArrayList<>();
                         listOfBooks = res;
+                        if (adapter == null) {
+                            adapter = new CustomAdapterBooks(listOfBooks, getContext());
+                            lv.setAdapter(adapter);
+                        }
                         adapter.refresh(listOfBooks);
                         if ( listOfBooks.size() == 0 )
                             MiscFunctions.createToast(getContext().getApplicationContext(), "No books were found!");

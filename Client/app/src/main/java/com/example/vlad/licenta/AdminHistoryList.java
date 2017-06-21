@@ -31,24 +31,7 @@ public class AdminHistoryList extends Fragment {
 
         historyListFragment = this;
 
-        booksInHistory = new ArrayList<>();
-
-        String url = ServerProperties.HOST;
-        url += "/library/getAdminHistory?userId="
-                + ((LoggedInActivity) getActivity()).getCurrentUser().getId();
-
-        ServerRequestGET<List<Book>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Book.class),
-                new AsyncResponse<List<Book>>() {
-                    @Override
-                    public void actionCompleted(List<Book> res) {
-                        if (res == null) res = new ArrayList<>();
-                        booksInHistory = res;
-                        adapter = new CustomAdapterHistoryBooks(booksInHistory, getContext());
-                        lv.setAdapter(adapter);
-                    }
-                });
-
-        theServerRequest.execute();
+        refresh();
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -65,21 +48,7 @@ public class AdminHistoryList extends Fragment {
 
             @Override
             public void onRefresh() {
-                String url = ServerProperties.HOST;
-                url += "/library/getAdminHistory?userId=";
-                url += ((LoggedInActivity) getActivity()).getCurrentUser().getId();
-
-                ServerRequestGET<List<Book>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Book.class),
-                        new AsyncResponse<List<Book>>() {
-                            @Override
-                            public void actionCompleted(List<Book> res) {
-                                if (res == null) res = new ArrayList<>();
-                                booksInHistory = res;
-                                adapter.refresh(booksInHistory);
-                            }
-                        });
-
-                theServerRequest.execute();
+                refresh();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -89,6 +58,34 @@ public class AdminHistoryList extends Fragment {
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (this.isVisible()) {
+            if (isVisibleToUser) {
+                refresh();
+            }
+        }
+    }
+
+    public void refresh() {
+        String url = ServerProperties.HOST;
+        url += "/library/getAdminHistory?userId="
+                + ((LoggedInActivity) getActivity()).getCurrentUser().getId();
+
+        ServerRequestGET<List<Book>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Book.class),
+                new AsyncResponse<List<Book>>() {
+                    @Override
+                    public void actionCompleted(List<Book> res) {
+                        if (res == null) res = new ArrayList<>();
+                        booksInHistory = res;
+                        if ( adapter == null ) {
+                            adapter = new CustomAdapterHistoryBooks(booksInHistory, getContext());
+                            lv.setAdapter(adapter);
+                        }
+                        adapter.refresh(booksInHistory);
+                    }
+                });
+
+        theServerRequest.execute();
 
     }
 }

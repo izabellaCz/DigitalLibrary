@@ -22,11 +22,6 @@ public class FavouritesList extends Fragment {
 
     private ListView lv;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private final String KEY_TITLE = "Title";
-    private final String KEY_AUTHOR = "Author";
-    public static final String TAG = Client.class.getSimpleName();
-    protected JSONArray mTasksData;
-
 
     private List<Book> favouriteBooks;
     private CustomAdapterBooks adapter;
@@ -41,24 +36,6 @@ public class FavouritesList extends Fragment {
 
         lv = (ListView) rootView.findViewById(R.id.listFavourites);
 
-        favouriteBooks = new ArrayList<>();
-
-        String url = ServerProperties.HOST;
-        url += "/library/getFavouriteBooks?userId=" + ((Client)getActivity()).getCurrentUser().getId();
-
-        ServerRequestGET<List<Book>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Book.class),
-                new AsyncResponse<List<Book>>() {
-                    @Override
-                    public void actionCompleted(List<Book> res) {
-                        if (res == null) res = new ArrayList<>();
-                        favouriteBooks = res;
-                        adapter = new CustomAdapterBooks(favouriteBooks, getContext());
-                        lv.setAdapter(adapter);
-                    }
-                });
-
-        theServerRequest.execute();
-
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -72,21 +49,7 @@ public class FavouritesList extends Fragment {
 
             @Override
             public void onRefresh() {
-                String url = ServerProperties.HOST;
-                url += "/library/getFavouriteBooks?userId=";
-                url += ((LoggedInActivity) getActivity()).getCurrentUser().getId();
-
-                ServerRequestGET<List<Book>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Book.class),
-                        new AsyncResponse<List<Book>>() {
-                            @Override
-                            public void actionCompleted(List<Book> res) {
-                                if (res == null) res = new ArrayList<>();
-                                favouriteBooks = res;
-                                adapter.refresh(favouriteBooks);
-                            }
-                        });
-
-                theServerRequest.execute();
+                refresh();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -98,26 +61,32 @@ public class FavouritesList extends Fragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if ( this.isVisible() )
-        {
-            if ( isVisibleToUser )
-            {
-                String url = ServerProperties.HOST;
-                url += "/library/getFavouriteBooks?userId=" + ((Client)getActivity()).getCurrentUser().getId();
-
-                ServerRequestGET<List<Book>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Book.class),
-                        new AsyncResponse<List<Book>>() {
-                            @Override
-                            public void actionCompleted(List<Book> res) {
-                                if (res == null) res = new ArrayList<>();
-                                favouriteBooks = res;
-                                adapter.refresh(favouriteBooks);
-                            }
-                        });
-
-                theServerRequest.execute();
+        if (this.isVisible()) {
+            if (isVisibleToUser) {
+                refresh();
             }
         }
 
+    }
+
+    public void refresh() {
+        String url = ServerProperties.HOST;
+        url += "/library/getFavouriteBooks?userId=" + ((Client)getActivity()).getCurrentUser().getId();
+
+        ServerRequestGET<List<Book>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Book.class),
+                new AsyncResponse<List<Book>>() {
+                    @Override
+                    public void actionCompleted(List<Book> res) {
+                        if (res == null) res = new ArrayList<>();
+                        favouriteBooks = res;
+                        if (adapter == null) {
+                            adapter = new CustomAdapterBooks(favouriteBooks, getContext());
+                            lv.setAdapter(adapter);
+                        }
+                        adapter.refresh(favouriteBooks);
+                    }
+                });
+
+        theServerRequest.execute();
     }
 }
