@@ -20,8 +20,8 @@ public class AdminHistoryList extends Fragment {
     private ListView lv;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private List<Book> booksInHistory;
-    private static CustomAdapterHistoryBooks adapter;
-    public static Fragment historyListFragment;
+    private CustomAdapterHistoryBooks adapter;
+    private Fragment historyListFragment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

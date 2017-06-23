@@ -2,6 +2,7 @@ package com.example.vlad.licenta;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
@@ -42,6 +43,7 @@ public class FilterBooksActivity extends AppCompatActivity {
             tempFilter.setAvailable(String.valueOf(cb_Availability.isChecked()));
         else
             tempFilter.setAvailable("");
+
         finish();
     }
 }

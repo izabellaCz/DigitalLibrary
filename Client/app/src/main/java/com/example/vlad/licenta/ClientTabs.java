@@ -4,9 +4,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-//import com.example.vlad.licenta.Client.PlaceholderFragment;
-
-
 public class ClientTabs extends FragmentPagerAdapter {
 
     public ClientTabs(FragmentManager fm) {
@@ -16,7 +13,6 @@ public class ClientTabs extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        // Show 2 total pages.
         return 3;
     }
     @Override
@@ -41,10 +37,8 @@ public class ClientTabs extends FragmentPagerAdapter {
                 return new FavouritesList();
             case 2:
                 return new HistoryList();
-
-            default:
-                return null;
         }
+        return null;
     }
 }
 
