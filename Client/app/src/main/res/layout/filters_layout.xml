@@ -114,6 +114,22 @@
                 android:layout_weight="0.3"/>
         </LinearLayout>
 
+
+        <Button
+            android:id="@+id/btn_reset_filters"
+            style="?android:textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:text="Reset Filters"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:onClick="resetFilters"
+            android:background="#40FFFFFF"
+            android:textColorLink="@color/colorAccent"
+            android:layout_alignParentBottom="true"
+            tools:style="@style/Widget.AppCompat.Button.Borderless.Colored" />
+
         <Button
             android:id="@+id/btn_apply_filters"
             style="?android:textAppearanceSmall"
