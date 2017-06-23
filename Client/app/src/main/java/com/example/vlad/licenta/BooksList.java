@@ -24,7 +24,7 @@ public class BooksList extends Fragment implements  View.OnClickListener{
     private ListView lv;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private List<Book> listOfBooks;
+    private List<Book> listOfBooks = new ArrayList<>();
 
     private static CustomAdapterBooks adapter;
     public static Fragment booksListFragment;
@@ -47,9 +47,6 @@ public class BooksList extends Fragment implements  View.OnClickListener{
             fab_filter.setVisibility(View.GONE);
 
         booksListFragment = this;
-
-        refresh();
-
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -84,7 +81,6 @@ public class BooksList extends Fragment implements  View.OnClickListener{
     @Override
     public void onResume() {
         super.onResume();
-
         refresh();
     }
 
@@ -113,8 +109,7 @@ public class BooksList extends Fragment implements  View.OnClickListener{
 
     }
 
-    private void refresh()
-    {
+    private void refresh() {
         Filters filters = Filters.getInstance();
 
         String url = ServerProperties.HOST;
@@ -130,13 +125,11 @@ public class BooksList extends Fragment implements  View.OnClickListener{
                     @Override
                     public void actionCompleted(List<Book> res) {
                         if (res == null) res = new ArrayList<>();
-                        listOfBooks = res;
-                        if (adapter == null) {
-                            adapter = new CustomAdapterBooks(listOfBooks, getContext());
-                            lv.setAdapter(adapter);
-                        }
-                        adapter.refresh(listOfBooks);
-                        if ( listOfBooks.size() == 0 )
+                        listOfBooks.clear();
+                        listOfBooks.addAll(res);
+                        adapter = new CustomAdapterBooks(listOfBooks, getContext());
+                        lv.setAdapter(adapter);
+                        if (listOfBooks.size() == 0)
                             MiscFunctions.createToast(getContext().getApplicationContext(), "No books were found!");
                     }
                 });

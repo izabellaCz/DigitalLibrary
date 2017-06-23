@@ -12,8 +12,6 @@ import android.widget.ListView;
 import com.example.vlad.licenta.model.Book;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
-import org.json.JSONArray;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +31,8 @@ public class FavouritesList extends Fragment {
         View rootView = inflater.inflate(R.layout.favourites_list, container, false);
 
         favouriteListFragment = this;
+
+        refresh();
 
         lv = (ListView) rootView.findViewById(R.id.listFavourites);
 
@@ -79,11 +79,9 @@ public class FavouritesList extends Fragment {
                     public void actionCompleted(List<Book> res) {
                         if (res == null) res = new ArrayList<>();
                         favouriteBooks = res;
-                        if (adapter == null) {
-                            adapter = new CustomAdapterBooks(favouriteBooks, getContext());
-                            lv.setAdapter(adapter);
-                        }
-                        adapter.refresh(favouriteBooks);
+                        adapter = new CustomAdapterBooks(favouriteBooks, getContext());
+                        lv.setAdapter(adapter);
+
                     }
                 });
 
