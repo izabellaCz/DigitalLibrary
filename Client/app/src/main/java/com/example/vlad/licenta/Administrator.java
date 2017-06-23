@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -36,10 +35,12 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    private TabLayout tabLayout;
 
     private User currentUser;
 
-    private Boolean isFabOpen = false;
+    private boolean isFabOpen = false;
+    private boolean filterable = true;
     private FloatingActionButton fab_settings, fab_add_book, fab_scan, fab_filter;
     private Animation fab_show, fab_hide;
 
@@ -55,13 +56,13 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
 
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
         mViewPager.setCurrentItem(1, true);
 
         mSectionsPagerAdapter = new AdministratorTabs(getSupportFragmentManager());
         mViewPager.setAdapter(mSectionsPagerAdapter);
-
 
         fab_settings = (FloatingActionButton)findViewById(R.id.fab_settings);
         fab_add_book = (FloatingActionButton)findViewById(R.id.fab_add_book);
@@ -75,6 +76,23 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
         fab_add_book.setOnClickListener(this);
         fab_scan.setOnClickListener(this);
         fab_filter.setOnClickListener(this);
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if(isFabOpen) animateFAB();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
         logout = false;
         logoutTimer = new Timer();
@@ -163,6 +181,7 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
             case R.id.fab_filter: {
                 Intent intent = new Intent(getApplicationContext(), FilterBooksActivity.class);
                 startActivity(intent);
+                //tabLayout.getTabAt(0).select();
             }
                 break;
 
@@ -175,7 +194,8 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
         if(isFabOpen){
             fab_add_book.startAnimation(fab_hide);
             fab_scan.startAnimation(fab_hide);
-            fab_filter.startAnimation(fab_hide);
+            if (fab_filter.getVisibility() != View.INVISIBLE && fab_filter.getVisibility() != View.GONE)
+                fab_filter.startAnimation(fab_hide);
 
             fab_hide.setAnimationListener(new Animation.AnimationListener() {
                 @Override
@@ -187,10 +207,12 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
                 public void onAnimationEnd(Animation animation) {
                     fab_add_book.setVisibility(View.GONE);
                     fab_scan.setVisibility(View.GONE);
-                    fab_filter.setVisibility(View.GONE);
                     fab_add_book.clearAnimation();
                     fab_scan.clearAnimation();
-                    fab_filter.clearAnimation();
+                    if (fab_filter.getVisibility() != View.INVISIBLE && fab_filter.getVisibility() != View.GONE) {
+                        fab_filter.setVisibility(View.GONE);
+                        fab_filter.clearAnimation();
+                    }
                 }
 
                 @Override
@@ -201,13 +223,15 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
 
             fab_add_book.setClickable(false);
             fab_scan.setClickable(false);
-            fab_filter.setClickable(false);
+            if (fab_filter.getVisibility() != View.INVISIBLE && fab_filter.getVisibility() != View.GONE)
+                fab_filter.setClickable(false);
             isFabOpen = false;
 
         } else {
+            filterable = tabLayout.getSelectedTabPosition() == 0;
             fab_add_book.startAnimation(fab_show);
             fab_scan.startAnimation(fab_show);
-            fab_filter.startAnimation(fab_show);
+            if (filterable) fab_filter.startAnimation(fab_show);
             fab_show.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
@@ -218,10 +242,12 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
                 public void onAnimationEnd(Animation animation) {
                     fab_add_book.setVisibility(View.VISIBLE);
                     fab_scan.setVisibility(View.VISIBLE);
-                    fab_filter.setVisibility(View.VISIBLE);
                     fab_add_book.clearAnimation();
                     fab_scan.clearAnimation();
-                    fab_filter.clearAnimation();
+                    if (filterable) {
+                        fab_filter.setVisibility(View.VISIBLE);
+                        fab_filter.clearAnimation();
+                    }
                 }
 
                 @Override
@@ -231,9 +257,9 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
             });
 
 
+            if (filterable) fab_filter.setClickable(true);
             fab_add_book.setClickable(true);
             fab_scan.setClickable(true);
-            fab_filter.setClickable(true);
             isFabOpen = true;
 
         }
