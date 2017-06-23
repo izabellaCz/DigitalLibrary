@@ -296,7 +296,8 @@ public class MiscFunctions {
         final ImageButton addRemoveFavs = (ImageButton) dialogView.findViewById(R.id.ib_AddRemoveFav);
 
         if (((LoggedInActivity)activ).getCurrentUser().getType().compareTo("ADMINISTRATOR") == 0 ) {
-            addRemoveFavs.setVisibility(View.INVISIBLE);
+            //addRemoveFavs.setVisibility(View.INVISIBLE);
+            addRemoveFavs.setImageBitmap(BitmapFactory.decodeResource(activ.getResources(), R.drawable.delete_ic));
         }
         else {
             if (book.isFavourite()) {
@@ -305,34 +306,42 @@ public class MiscFunctions {
             addRemoveFavs.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String url = ServerProperties.HOST;
-                    url += "/library";
-                    url += !book.isFavourite() ? "/addFavourite" : "/removeFavourite";
+                    if (((LoggedInActivity)activ).getCurrentUser().getType().compareTo("ADMINISTRATOR") == 0 ) {
+                        //TODO: add implementation to delete a book
+                        String url = ServerProperties.HOST;
 
-                    url += "?userId=" + ((LoggedInActivity)activ).getCurrentUser().getId();
-                    url += "&bookId=" + book.getId();
+                    }
+                    else  {
+                        String url = ServerProperties.HOST;
+                        url += "/library";
+                        url += !book.isFavourite() ? "/addFavourite" : "/removeFavourite";
 
-                    ServerRequestGET<String> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(String.class),
-                        new AsyncResponse<String>() {
-                            @Override
-                            public void actionCompleted(String obj) {
-                                if (obj != null && obj.compareTo("1") == 0) {
-                                    if ( book.isFavourite() ) {
-                                        book.setFavourite(false);
-                                        addRemoveFavs.setImageBitmap(BitmapFactory.decodeResource(activ.getResources(), R.drawable.fav_plus_small));
-                                    } else {
-                                        book.setFavourite(true);
-                                        addRemoveFavs.setImageBitmap(BitmapFactory.decodeResource(activ.getResources(), R.drawable.fav_minus_small));
+                        url += "?userId=" + ((LoggedInActivity)activ).getCurrentUser().getId();
+                        url += "&bookId=" + book.getId();
+
+                        ServerRequestGET<String> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(String.class),
+                                new AsyncResponse<String>() {
+                                    @Override
+                                    public void actionCompleted(String obj) {
+                                        if (obj != null && obj.compareTo("1") == 0) {
+                                            if ( book.isFavourite() ) {
+                                                book.setFavourite(false);
+                                                addRemoveFavs.setImageBitmap(BitmapFactory.decodeResource(activ.getResources(), R.drawable.fav_plus_small));
+                                            } else {
+                                                book.setFavourite(true);
+                                                addRemoveFavs.setImageBitmap(BitmapFactory.decodeResource(activ.getResources(), R.drawable.fav_minus_small));
+                                            }
+                                            MiscFunctions.createToast(activ.getApplicationContext(), "Success");
+                                        }
+                                        else
+                                            MiscFunctions.createToast(activ.getApplicationContext(), "Failed");
+
                                     }
-                                    MiscFunctions.createToast(activ.getApplicationContext(), "Success");
-                                }
-                                else
-                                    MiscFunctions.createToast(activ.getApplicationContext(), "Failed");
-
-                            }
-                        });
+                                });
 
                         theServerRequest.execute();
+                    }
+
 
                 }
             });
