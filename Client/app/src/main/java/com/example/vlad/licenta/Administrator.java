@@ -53,6 +53,7 @@ public class Administrator extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_administrator);
         currentUser = (User) getIntent().getSerializableExtra("currentUser");
+        MiscFunctions.createToast(getApplicationContext(), "Welcome " + currentUser.getFullname() + "!");
 
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
