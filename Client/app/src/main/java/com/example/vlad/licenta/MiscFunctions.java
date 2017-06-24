@@ -508,6 +508,19 @@ public class MiscFunctions {
         return 0;
     }
 
+    public static void createAlertDialogWithMessage(Activity activity, String message) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
+        dialogBuilder.setMessage(message);
+        dialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
+        });
+
+        AlertDialog dialog = dialogBuilder.create();
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+    }
+
     public static int createToast(Context context, String message) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
         return 0;

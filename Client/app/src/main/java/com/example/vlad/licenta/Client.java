@@ -1,5 +1,6 @@
 package com.example.vlad.licenta;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -19,7 +20,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.vlad.licenta.model.User;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -31,8 +35,6 @@ public class Client extends AppCompatActivity implements LoggedInActivity{
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-
-    public ImageView image;
 
     private User currentUser;
 
@@ -46,6 +48,25 @@ public class Client extends AppCompatActivity implements LoggedInActivity{
         setContentView(R.layout.activity_client);
 
         currentUser = (User) getIntent().getSerializableExtra("currentUser");
+        MiscFunctions.createToast(getApplicationContext(), "Welcome " + currentUser.getFullname() + "!");
+
+        final Activity currentActivity = this;
+
+        String url = ServerProperties.HOST +
+                "/library/hasDueBooks?userId=" +
+                currentUser.getId() +
+                "&currentDate=" +
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+
+        ServerRequestGET<String> hasDueBooks = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(String.class), new AsyncResponse<String>() {
+            @Override
+            public void actionCompleted(String obj) {
+                if (obj != null && obj.equals("1")) {
+                    MiscFunctions.createAlertDialogWithMessage(currentActivity, "Warning! \nYou have due books!");
+                }
+            }
+        });
+        hasDueBooks.execute();
 
 
         // Set up the ViewPager with the sections adapter.
