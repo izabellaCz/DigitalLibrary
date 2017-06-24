@@ -77,10 +77,8 @@ public class AdminHistoryList extends Fragment {
                     public void actionCompleted(List<Book> res) {
                         if (res == null) res = new ArrayList<>();
                         booksInHistory = res;
-                        if ( adapter == null ) {
-                            adapter = new CustomAdapterHistoryBooks(booksInHistory, getContext());
-                            lv.setAdapter(adapter);
-                        }
+                        adapter = new CustomAdapterHistoryBooks(booksInHistory, getContext());
+                        lv.setAdapter(adapter);
                         adapter.refresh(booksInHistory);
                     }
                 });
