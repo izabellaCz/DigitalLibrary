@@ -114,6 +114,20 @@
                 android:layout_weight="0.3"/>
         </LinearLayout>
 
+        <Button
+            android:id="@+id/btn_apply_filters"
+            style="?android:textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:text="Apply Filters"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:onClick="applyFilters"
+            android:background="#40FFFFFF"
+            android:textColorLink="@color/colorAccent"
+            android:layout_alignParentBottom="true"
+            tools:style="@style/Widget.AppCompat.Button.Borderless.Colored" />
 
         <Button
             android:id="@+id/btn_reset_filters"
@@ -130,20 +144,6 @@
             android:layout_alignParentBottom="true"
             tools:style="@style/Widget.AppCompat.Button.Borderless.Colored" />
 
-        <Button
-            android:id="@+id/btn_apply_filters"
-            style="?android:textAppearanceSmall"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginTop="16dp"
-            android:text="Apply Filters"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:onClick="applyFilters"
-            android:background="#40FFFFFF"
-            android:textColorLink="@color/colorAccent"
-            android:layout_alignParentBottom="true"
-            tools:style="@style/Widget.AppCompat.Button.Borderless.Colored" />
 
     </LinearLayout>
 
