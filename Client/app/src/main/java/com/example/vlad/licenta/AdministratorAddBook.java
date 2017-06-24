@@ -41,8 +41,10 @@ public class AdministratorAddBook extends AppCompatActivity {
     private Button button_addBook, button_addAuthor, button_addCover;
 
     private static String addAuthorDialogResult = "";
-    private static String spinnerItemSelected = "";
+    private static int spinnerPosition = -1;
     private static Activity adminAddBook;
+
+    final private List<Author> authors = new ArrayList<>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,7 +63,7 @@ public class AdministratorAddBook extends AppCompatActivity {
         spinner_author.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                spinnerItemSelected = parent.getItemAtPosition(position).toString();
+                spinnerPosition = position;
             }
 
             @Override
@@ -90,7 +92,6 @@ public class AdministratorAddBook extends AppCompatActivity {
             }
         });
 
-
         String url = ServerProperties.HOST;
         url += "/authors/list";
         ServerRequestGET<List<Author>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Author.class),
@@ -98,6 +99,7 @@ public class AdministratorAddBook extends AppCompatActivity {
                     @Override
                     public void actionCompleted(List<Author> obj) {
                         if (obj == null) obj = new ArrayList<>();
+                        authors.addAll(obj);
                         List<String> arraySpinner = new ArrayList<>();
                         arraySpinner.add("Choose Author");
                         for (Author author : obj) {
@@ -175,13 +177,6 @@ public class AdministratorAddBook extends AppCompatActivity {
 
     public void addBook(View view) throws FileNotFoundException {
 
-        tv_title.setText("Title223");
-        tv_publisher.setText("publisher1");
-        spinnerItemSelected = "2";
-        tv_description.setText("descr1");
-        tv_total.setText("5");
-
-
         if (tv_title.getText().toString().isEmpty()) {
             tv_title.setError("Please provide the book title.");
             return;
@@ -192,7 +187,7 @@ public class AdministratorAddBook extends AppCompatActivity {
             return;
         }
 
-        if (spinnerItemSelected.compareTo("") == 0 || spinnerItemSelected.compareTo("Choose author") == 0) {
+        if (spinnerPosition == -1 || spinnerPosition == 0) {
             MiscFunctions.createToast(getApplicationContext(), "Please provide an author for the book.");
             return;
         }
@@ -208,14 +203,9 @@ public class AdministratorAddBook extends AppCompatActivity {
             return;
         }
 
-        if (tv_cover.getText().toString().compareTo("") == 0) {
-            //TODO:load default cover image to be sent to the database
-        }
-
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-//        Bitmap bmp = BitmapFactory.decodeFile(tv_cover.getText().toString());
         Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.default_book_image);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
@@ -230,7 +220,7 @@ public class AdministratorAddBook extends AppCompatActivity {
         LinkedMultiValueMap<String, Object> multiPartRequest = new LinkedMultiValueMap<>();
         multiPartRequest.add("title", tv_title.getText().toString());
         multiPartRequest.add("publisher", tv_publisher.getText().toString());
-        multiPartRequest.add("author", spinnerItemSelected);
+        multiPartRequest.add("author", String.valueOf(authors.get(spinnerPosition - 1).getId()));
         multiPartRequest.add("description", tv_description.getText().toString());
         multiPartRequest.add("total", tv_total.getText().toString());
         multiPartRequest.add("cover", byteArrayResource);
@@ -243,8 +233,15 @@ public class AdministratorAddBook extends AppCompatActivity {
                 new AsyncResponse<String>() {
                     @Override
                     public void actionCompleted(String obj) {
-                        if ( obj != null && obj.compareTo("1") == 0 )
+                        if ( obj != null && obj.compareTo("1") == 0 ) {
                             MiscFunctions.createToast(getApplicationContext(), "Book add: Success");
+                            tv_title.setText("");
+                            tv_description.setText("");
+                            spinner_author.setSelection(0);
+                            tv_publisher.setText("");
+                            tv_total.setText("");
+                            tv_cover.setText("");
+                        }
                         else
                             MiscFunctions.createToast(getApplicationContext(), "Book add: Fail");
                     }
