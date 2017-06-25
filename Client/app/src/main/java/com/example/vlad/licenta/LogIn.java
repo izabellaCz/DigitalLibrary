@@ -1,17 +1,17 @@
 package com.example.vlad.licenta;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 
 import com.example.vlad.licenta.model.User;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 
 public class LogIn extends AppCompatActivity {
@@ -63,12 +63,6 @@ public class LogIn extends AppCompatActivity {
     }
 
     public void logInMethod(View view){
-        /*emailView.setText("admin");
-        passwordView.setText("admin");*/
-
-       /* emailView.setText("iza@iza.com");
-        passwordView.setText("password");*/
-
         String email = emailView.getText().toString();
         String password = passwordView.getText().toString();
 
