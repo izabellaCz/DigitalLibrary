@@ -1,5 +1,6 @@
 package com.example.vlad.licenta;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -19,7 +20,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BooksList extends Fragment implements  View.OnClickListener{
+public class BooksList extends Fragment implements  DialogInterface.OnDismissListener, View.OnClickListener{
 
     private ListView lv;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -52,7 +53,7 @@ public class BooksList extends Fragment implements  View.OnClickListener{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                MiscFunctions.createAlertDialog(booksListFragment.getActivity(), listOfBooks.get(position));
+                MiscFunctions.createAlertDialog(booksListFragment.getActivity(), listOfBooks.get(position), (BooksList)booksListFragment);
 
             }
         });
@@ -148,5 +149,10 @@ public class BooksList extends Fragment implements  View.OnClickListener{
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        refresh();
     }
 }

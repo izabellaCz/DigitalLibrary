@@ -39,7 +39,7 @@ public class HistoryList extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 final Book selectedBook = booksInHistory.get(position);
-                MiscFunctions.createAlertDialog(historyListFragment.getActivity(), selectedBook);
+                MiscFunctions.createAlertDialog(historyListFragment.getActivity(), selectedBook, null);
 
             }
         });

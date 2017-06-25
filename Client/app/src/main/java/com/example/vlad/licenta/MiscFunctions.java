@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -276,9 +277,12 @@ public class MiscFunctions {
     /**
      * When tapped on a book in the list
      */
-    public static int createAlertDialog(final Activity activ, final Book book) {
+    public static int createAlertDialog(final Activity activ, final Book book, AlertDialog.OnDismissListener listener) {
 
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activ);
+        if ( listener != null )
+            dialogBuilder.setOnDismissListener(listener);
+
         final LayoutInflater inflater = activ.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.custom_dialog_book_details, null);
         dialogBuilder.setView(dialogView);
@@ -297,54 +301,9 @@ public class MiscFunctions {
 
         if (((LoggedInActivity)activ).getCurrentUser().getType().compareTo("ADMINISTRATOR") == 0 ) {
             //addRemoveFavs.setVisibility(View.INVISIBLE);
-            addRemoveFavs.setImageBitmap(BitmapFactory.decodeResource(activ.getResources(), R.drawable.delete_ic));
+            addRemoveFavs.setImageBitmap(BitmapFactory.decodeResource(activ.getResources(), R.drawable.remove));
         }
         else {
-            if (book.isFavourite()) {
-                addRemoveFavs.setImageBitmap(BitmapFactory.decodeResource(activ.getResources(), R.drawable.fav_minus_small));
-            }
-            addRemoveFavs.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (((LoggedInActivity)activ).getCurrentUser().getType().compareTo("ADMINISTRATOR") == 0 ) {
-                        //TODO: add implementation to delete a book
-                        String url = ServerProperties.HOST;
-
-                    }
-                    else  {
-                        String url = ServerProperties.HOST;
-                        url += "/library";
-                        url += !book.isFavourite() ? "/addFavourite" : "/removeFavourite";
-
-                        url += "?userId=" + ((LoggedInActivity)activ).getCurrentUser().getId();
-                        url += "&bookId=" + book.getId();
-
-                        ServerRequestGET<String> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(String.class),
-                                new AsyncResponse<String>() {
-                                    @Override
-                                    public void actionCompleted(String obj) {
-                                        if (obj != null && obj.compareTo("1") == 0) {
-                                            if ( book.isFavourite() ) {
-                                                book.setFavourite(false);
-                                                addRemoveFavs.setImageBitmap(BitmapFactory.decodeResource(activ.getResources(), R.drawable.fav_plus_small));
-                                            } else {
-                                                book.setFavourite(true);
-                                                addRemoveFavs.setImageBitmap(BitmapFactory.decodeResource(activ.getResources(), R.drawable.fav_minus_small));
-                                            }
-                                            MiscFunctions.createToast(activ.getApplicationContext(), "Success");
-                                        }
-                                        else
-                                            MiscFunctions.createToast(activ.getApplicationContext(), "Failed");
-
-                                    }
-                                });
-
-                        theServerRequest.execute();
-                    }
-
-
-                }
-            });
 
             if (book.getHistory().getLoanDate() != null && book.getHistory().getReturnDate() == null) {
             /* to be returned */
@@ -357,7 +316,6 @@ public class MiscFunctions {
                     }
                 });
             } else {
-
             /* to be rented */
                 dialogBuilder.setPositiveButton("Rent Book", new DialogInterface.OnClickListener() {
                     @Override
@@ -413,7 +371,64 @@ public class MiscFunctions {
             }
         });
 
-        AlertDialog dialog = dialogBuilder.create();
+        final AlertDialog dialog = dialogBuilder.create();
+
+
+        addRemoveFavs.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (((LoggedInActivity) activ).getCurrentUser().getType().compareTo("ADMINISTRATOR") == 0) {
+                    //TODO: add implementation to delete a book
+                    String url = ServerProperties.HOST;
+                    url += "/library/removeBook?bookId=" + book.getId();
+                    ServerRequestGET<String> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(String.class),
+                            new AsyncResponse<String>() {
+                                @Override
+                                public void actionCompleted(String obj) {
+                                    if (obj != null && obj.compareTo("1") == 0) {
+                                        MiscFunctions.createToast(activ.getApplicationContext(), "Book Removed");
+                                    } else
+                                        MiscFunctions.createToast(activ.getApplicationContext(), "Failed to remove");
+
+                                    dialog.dismiss();
+                                }
+                            });
+
+                    theServerRequest.execute();
+                } else {
+                    String url = ServerProperties.HOST;
+                    url += "/library";
+                    url += !book.isFavourite() ? "/addFavourite" : "/removeFavourite";
+
+                    url += "?userId=" + ((LoggedInActivity) activ).getCurrentUser().getId();
+                    url += "&bookId=" + book.getId();
+
+                    ServerRequestGET<String> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructType(String.class),
+                            new AsyncResponse<String>() {
+                                @Override
+                                public void actionCompleted(String obj) {
+                                    if (obj != null && obj.compareTo("1") == 0) {
+                                        if (book.isFavourite()) {
+                                            book.setFavourite(false);
+                                            addRemoveFavs.setImageBitmap(BitmapFactory.decodeResource(activ.getResources(), R.drawable.fav_plus_small));
+                                        } else {
+                                            book.setFavourite(true);
+                                            addRemoveFavs.setImageBitmap(BitmapFactory.decodeResource(activ.getResources(), R.drawable.fav_minus_small));
+                                        }
+                                        MiscFunctions.createToast(activ.getApplicationContext(), "Success");
+                                    } else
+                                        MiscFunctions.createToast(activ.getApplicationContext(), "Failed");
+                                }
+                            });
+
+                    theServerRequest.execute();
+                }
+
+
+            }
+        });
+
+
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
 

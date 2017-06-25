@@ -92,6 +92,11 @@ public class AdministratorAddBook extends AppCompatActivity {
             }
         });
 
+        refreshAuthors();
+
+    }
+
+    private void refreshAuthors() {
         String url = ServerProperties.HOST;
         url += "/authors/list";
         ServerRequestGET<List<Author>> theServerRequest = new ServerRequestGET<>(url, TypeFactory.defaultInstance().constructCollectionType(List.class, Author.class),
@@ -99,6 +104,7 @@ public class AdministratorAddBook extends AppCompatActivity {
                     @Override
                     public void actionCompleted(List<Author> obj) {
                         if (obj == null) obj = new ArrayList<>();
+                        authors.clear();
                         authors.addAll(obj);
                         List<String> arraySpinner = new ArrayList<>();
                         arraySpinner.add("Choose Author");
@@ -108,11 +114,10 @@ public class AdministratorAddBook extends AppCompatActivity {
 
                         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_spinner_item, arraySpinner);
                         spinner_author.setAdapter(adapter);
-                        }
-                    });
+                    }
+                });
 
         theServerRequest.execute();
-
     }
 
     private boolean CreateAlertDialog(final Activity activity)
@@ -152,6 +157,8 @@ public class AdministratorAddBook extends AppCompatActivity {
                                         ArrayAdapter<String> adapt = (ArrayAdapter<String>) spinner_author.getAdapter();
                                         adapt.add(addAuthorDialogResult);
                                         addAuthorDialogResult = "";
+
+                                        refreshAuthors();
                                     }
                                     else
                                     {
@@ -206,7 +213,11 @@ public class AdministratorAddBook extends AppCompatActivity {
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.default_book_image);
+        Bitmap bmp;
+        if (tv_cover.getText().toString().isEmpty())
+            bmp = BitmapFactory.decodeResource(getResources(), R.drawable.default_book_image);
+        else
+            bmp = BitmapFactory.decodeFile(tv_cover.getText().toString());
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
 
