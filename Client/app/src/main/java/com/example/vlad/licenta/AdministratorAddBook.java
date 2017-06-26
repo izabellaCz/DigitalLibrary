@@ -7,9 +7,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
 
 import com.example.vlad.licenta.model.Author;
@@ -36,6 +38,7 @@ import java.util.List;
 
 public class AdministratorAddBook extends AppCompatActivity {
 
+    private static final int SELECT_PICTURE = 100;
     private AutoCompleteTextView tv_title, tv_publisher, tv_total, tv_cover, tv_description;
     private Spinner spinner_author;
     private Button button_addBook, button_addAuthor, button_addCover;
@@ -45,6 +48,8 @@ public class AdministratorAddBook extends AppCompatActivity {
     private static Activity adminAddBook;
 
     final private List<Author> authors = new ArrayList<>();
+
+    ImageView imgView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,6 +63,8 @@ public class AdministratorAddBook extends AppCompatActivity {
         tv_total = (AutoCompleteTextView) findViewById(R.id.tv_AddTotalBooks);
         tv_cover = (AutoCompleteTextView) findViewById(R.id.tv_BookCover);
         tv_description = (AutoCompleteTextView) findViewById(R.id.tv_AddDescription);
+
+        imgView = (ImageView) findViewById(R.id.testImgView);
 
         spinner_author = (Spinner) findViewById(R.id.spinner_AddAuthor);
         spinner_author.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -87,8 +94,13 @@ public class AdministratorAddBook extends AppCompatActivity {
         button_addCover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(i, 1);
+                /*Intent i = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(i, 1);*/
+
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
             }
         });
 
@@ -214,14 +226,18 @@ public class AdministratorAddBook extends AppCompatActivity {
         header.setContentType(MediaType.MULTIPART_FORM_DATA);
 
         Bitmap bmp;
-        if (tv_cover.getText().toString().isEmpty())
+        ByteArrayResource byteArrayResource;
+        if (tv_cover.getText().toString().isEmpty()) {
             bmp = BitmapFactory.decodeResource(getResources(), R.drawable.default_book_image);
-        else
-            bmp = BitmapFactory.decodeFile(tv_cover.getText().toString());
+        }
+        else {
+            bmp = ((BitmapDrawable)imgView.getDrawable()).getBitmap();
+        }
+
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
 
-        ByteArrayResource byteArrayResource = new ByteArrayResource(stream.toByteArray()) {
+        byteArrayResource = new ByteArrayResource(stream.toByteArray()) {
             @Override
             public String getFilename() {
                 return tv_cover.getText().toString();
@@ -261,19 +277,44 @@ public class AdministratorAddBook extends AppCompatActivity {
         serverRequestPOST.execute();
     }
 
+    /* Get the real path from the URI */
+    public String getPathFromURI(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1 && resultCode == RESULT_OK && null != data) {
-            Uri selectedImage = data.getData();
-            String[] filePathColumn = { MediaStore.Images.Media.DATA };
-            Cursor cursor = getContentResolver().query(selectedImage,filePathColumn, null, null, null);
-            cursor.moveToFirst();
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
-            cursor.close();
+        if (resultCode == RESULT_OK) {
+            if (requestCode == SELECT_PICTURE) {
+                // Get the url from data
+                Uri selectedImageUri = data.getData();
+                if (null != selectedImageUri) {
+                    // Get the path from the Uri
+                    String path = getPathFromURI(selectedImageUri);
+                    // Set the image in ImageView
+                    imgView.setImageURI(selectedImageUri);
 
-            tv_cover.setText(picturePath);
+                    tv_cover.setText(path);
+                }
+            }
         }
     }
 }

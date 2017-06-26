@@ -11,6 +11,11 @@
     tools:context="com.example.vlad.licenta.AdministratorAddBook"
     android:background="@mipmap/add_book">
 
+    <ImageView
+        android:id="@+id/testImgView"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:visibility="invisible"/>
     <LinearLayout
         android:id="@+id/email_login_form"
         android:layout_width="match_parent"
@@ -146,5 +151,7 @@
             tools:style="@style/Widget.AppCompat.Button.Borderless.Colored" />
 
     </LinearLayout>
+
+
 
 </RelativeLayout>

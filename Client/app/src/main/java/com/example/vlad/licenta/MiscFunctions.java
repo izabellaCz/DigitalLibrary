@@ -329,7 +329,7 @@ public class MiscFunctions {
         }
 
         final Bitmap bm;
-        if (book.getCover() == null) {
+        if (book.getCover() == null || book.getCover().length == 0) {
             bm = BitmapFactory.decodeResource(activ.getResources(), R.drawable.default_book_image);
         } else {
             bm = BitmapFactory.decodeByteArray(book.getCover(), 0, book.getCover().length);
