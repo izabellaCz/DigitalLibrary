@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
@@ -19,7 +20,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Spinner;
 
 import com.example.vlad.licenta.model.Author;
@@ -33,6 +33,7 @@ import org.springframework.util.LinkedMultiValueMap;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class AdministratorAddBook extends AppCompatActivity {
 
     final private List<Author> authors = new ArrayList<>();
 
-    ImageView imgView;
+    private Uri selectedImageUri;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,8 +64,6 @@ public class AdministratorAddBook extends AppCompatActivity {
         tv_total = (AutoCompleteTextView) findViewById(R.id.tv_AddTotalBooks);
         tv_cover = (AutoCompleteTextView) findViewById(R.id.tv_BookCover);
         tv_description = (AutoCompleteTextView) findViewById(R.id.tv_AddDescription);
-
-        imgView = (ImageView) findViewById(R.id.testImgView);
 
         spinner_author = (Spinner) findViewById(R.id.spinner_AddAuthor);
         spinner_author.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -231,7 +230,12 @@ public class AdministratorAddBook extends AppCompatActivity {
             bmp = BitmapFactory.decodeResource(getResources(), R.drawable.default_book_image);
         }
         else {
-            bmp = ((BitmapDrawable)imgView.getDrawable()).getBitmap();
+            try {
+                InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
+                bmp = ((BitmapDrawable) Drawable.createFromStream(inputStream, selectedImageUri.toString())).getBitmap();
+            } catch (FileNotFoundException e) {
+                bmp = BitmapFactory.decodeResource(getResources(), R.drawable.default_book_image);
+            }
         }
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -305,13 +309,10 @@ public class AdministratorAddBook extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == SELECT_PICTURE) {
                 // Get the url from data
-                Uri selectedImageUri = data.getData();
+                selectedImageUri = data.getData();
                 if (null != selectedImageUri) {
                     // Get the path from the Uri
                     String path = getPathFromURI(selectedImageUri);
-                    // Set the image in ImageView
-                    imgView.setImageURI(selectedImageUri);
-
                     tv_cover.setText(path);
                 }
             }
