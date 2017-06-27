@@ -1,5 +1,11 @@
 
 /*
+ultimele modificari:
+ALTER TABLE `android`.`books` 
+CHANGE COLUMN `cover` `cover` MEDIUMBLOB NULL DEFAULT NULL ;
+
+
+
 sau daca e creata deja structura:
 
 ALTER TABLE `android`.`history` 

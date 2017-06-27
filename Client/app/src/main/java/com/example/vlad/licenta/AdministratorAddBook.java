@@ -233,6 +233,17 @@ public class AdministratorAddBook extends AppCompatActivity {
             try {
                 InputStream inputStream = getContentResolver().openInputStream(selectedImageUri);
                 bmp = ((BitmapDrawable) Drawable.createFromStream(inputStream, selectedImageUri.toString())).getBitmap();
+
+                int width = bmp.getWidth();
+                int height = bmp.getHeight();
+                if (height > 200 || width > 200) {
+                    float scaleHeight = (float) height / (float) 200;
+                    float scaleWidth = (float) width / (float) 200;
+                    float scale;
+                    if (scaleWidth < scaleHeight) scale = scaleHeight;
+                    else scale = scaleWidth;
+                    bmp = Bitmap.createScaledBitmap(bmp, (int) (width / scale), (int) (height / scale), true);
+                }
             } catch (FileNotFoundException e) {
                 bmp = BitmapFactory.decodeResource(getResources(), R.drawable.default_book_image);
             }
