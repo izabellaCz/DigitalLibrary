@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BooksList extends Fragment implements  DialogInterface.OnDismissListener, View.OnClickListener{
+public class BooksList extends Fragment implements  DialogInterface.OnCancelListener, View.OnClickListener{
 
     private ListView lv;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -151,8 +151,13 @@ public class BooksList extends Fragment implements  DialogInterface.OnDismissLis
         }
     }
 
-    @Override
+    /*@Override
     public void onDismiss(DialogInterface dialog) {
+        refresh();
+    }*/
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
         refresh();
     }
 }

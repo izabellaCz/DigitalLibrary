@@ -277,11 +277,11 @@ public class MiscFunctions {
     /**
      * When tapped on a book in the list
      */
-    public static int createAlertDialog(final Activity activ, final Book book, AlertDialog.OnDismissListener listener) {
+    public static int createAlertDialog(final Activity activ, final Book book, AlertDialog.OnCancelListener listener) {
 
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activ);
         if ( listener != null )
-            dialogBuilder.setOnDismissListener(listener);
+            dialogBuilder.setOnCancelListener(listener);
 
         final LayoutInflater inflater = activ.getLayoutInflater();
         final View dialogView = inflater.inflate(R.layout.custom_dialog_book_details, null);
@@ -390,7 +390,7 @@ public class MiscFunctions {
                                     } else
                                         MiscFunctions.createToast(activ.getApplicationContext(), "Failed to remove");
 
-                                    dialog.dismiss();
+                                    dialog.cancel();//.dismiss();
                                 }
                             });
 
